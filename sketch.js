@@ -80,8 +80,6 @@ function checkCollision(gameBoard,tileSize) {
     const currentLine = gameBoard[y];
     for (let x = 0; x < currentLine.length; x++) {
       const currentTileValue = currentLine[x];
-      tilePosX=currentTileValue*tileSize
-      tilePosY=currentLine.length*tileSize
       if (currentTileValue===1) {
         if (rectIsInRect(heroX,heroY,x*tileSize-tileSize,y*tileSize-tileSize,tileSize*2,tileSize*2)) {
           return  true
