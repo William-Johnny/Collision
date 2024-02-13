@@ -111,39 +111,37 @@ var rectIsInRect = function(x,y,xP,yP,widthP,heightP){
  
 };
 
-function keyPressed() {
-  if (key === ("q")){
+// Appelé en continue après le setup
+function draw() {
+
+  if (keyIsDown(LEFT_ARROW)) {
     heroX -= 5;
     if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
       heroX += 5;
     } 
   }
-  if (key === 'd'){
+
+  if (keyIsDown(RIGHT_ARROW)) {
     heroX += 5;
     if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
       heroX -= 5;
     } 
   }
 
-  if (key === 'z'){
+  if (keyIsDown(UP_ARROW)) {
     heroY -= 5;
     if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
       heroY += 5;
     } 
   }
-  if (key === 's'){
+
+  if (keyIsDown(DOWN_ARROW)) {
     heroY += 5;
     if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
       heroY -= 5;
     } 
-    
   }
-  
-   
-}
 
-// Appelé en continue après le setup
-function draw() {
 
 
   drawWorld(worlds[currentWorld],
