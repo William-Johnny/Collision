@@ -25,6 +25,20 @@ let world2Board = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 ]
 let world2TileSize = 64
+
+let worldDecoration = [
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,99,0,99,99,99,99,99,99,99,99,99,99,99,99,99,99,0],
+  [0,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,0],
+  [0,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,0],
+  [0,99,99,99,99,99,99,99,99,99,99,99,99,1,99,99,99,0],
+  [0,99,99,1,1,99,99,99,99,99,99,99,1,1,99,99,99,0],
+  [0,99,1,1,1,1,99,99,99,1,1,1,1,1,1,1,1,0],
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+]
+let worldDecorationTileSize = 64
+
 let currentWorld = 0
 
 let worlds = [] 
@@ -54,8 +68,13 @@ function setup() {
                        2:loadImage('assets/pierre.jpg'),
                        3:loadImage('assets/lune.jpg')
                       }
+  
+  worldDecoration = { 
+                        0: loadImage('assets/bord.jpg'),
+                         1:loadImage('assets/herbe.jpg'),
+                        }
 
-  hero = loadImage('assets/hero.jpg');
+  hero = loadImage('assets/hero.png');
   worlds = [world1Board,world2Board]
   tileDictionnaries = [world1TileDictionnary,world2TileDictionnary]
   worldsTileSizes = [world1TileSize,world2TileSize]
@@ -66,6 +85,19 @@ function drawWorld(gameBoard,tileDictionnary,tileSize) {
     const currentLine = gameBoard[y];
     for (let x = 0; x < currentLine.length; x++) {
       const currentTileValue = currentLine[x];
+      let currentImageName = tileDictionnary[currentTileValue];
+      // Dessiner l'image
+      image(currentImageName, x*tileSize, y*tileSize, tileSize, tileSize);
+    }
+  }
+}
+
+function drawFront(gameBoard,tileDictionnary,tileSize) {
+  for (let y = 0; y < gameBoard.length; y++) {
+    const currentLine = gameBoard[y];
+    for (let x = 0; x < currentLine.length; x++) {
+      const currentTileValue = currentLine[x];
+      console.log(currentTileValue)
       let currentImageName = tileDictionnary[currentTileValue];
       // Dessiner l'image
       image(currentImageName, x*tileSize, y*tileSize, tileSize, tileSize);
@@ -111,9 +143,22 @@ var rectIsInRect = function(x,y,xP,yP,widthP,heightP){
  
 };
 
-// Appelé en continue après le setup
-function draw() {
+// function keyPressed() {
+//   if (keyCode === UP_ARROW){
+//     heroY -= 64;
+//     setTimeout(() => {
+//       heroY += 64;
+//       if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
+//         heroY -= 64;
+//       } 
+//     }, 500);
+//     if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
+//       heroY += 64;
+//     } 
+//   }
+// }
 
+const checkKeys = ()=>{
   if (keyIsDown(LEFT_ARROW)) {
     heroX -= 5;
     if (checkCollision(worlds[currentWorld],worldsTileSizes[currentWorld])) {
@@ -141,13 +186,19 @@ function draw() {
       heroY -= 5;
     } 
   }
+}
 
-
-
+// Appelé en continue après le setup
+function draw() {
+  checkKeys();
   drawWorld(worlds[currentWorld],
             tileDictionnaries[currentWorld],
             worldsTileSizes[currentWorld]);
   
   image(hero, heroX, heroY, heroWidth, heroHeight);
+
+  drawFront(worldDecoration,
+    worldDecoration,
+    worldsTileSizes[currentWorld]);
   //background(20);
 }
