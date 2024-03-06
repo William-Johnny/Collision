@@ -309,5 +309,3 @@ function draw() {
   
   //background(20);
 }
-
-
