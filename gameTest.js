@@ -19,12 +19,12 @@ let world1TileSize = 64
 
 let world1Decoration = [
   [0,0,0,0,0,0,0,0,0,0,0],
-  [0,2.1,2.2,12,12,12,12,3.1,3.2,3.3,0],
-  [0,"porte",12,12,12,12,12,12,12,12,0],
+  [0,12,2.1,2.2,12,12,12,3.1,3.2,3.3,0],
+  [0,"porte2",12,12,12,12,12,12,12,12,0],
   [0,12,12,12,12,12,12,12,12,12,0],
   [0,12,12,12,12,12,12,12,12,12,0],
-  [0,"4.1",12,12,12,12,12,12,12,12,0],
-  [0,"4.2",12,12,"porte",12,12,12,12,12,0],
+  [0,"4.1",12,12,12,12,"5.7","5.5","5.3","5.1",0],
+  [0,"4.2",12,12,"porte",12,"5.8","5.6","5.4","5.2",0],
   [0,0,0,0,0,0,0,0,0,0,0],
 ]
 
@@ -34,7 +34,7 @@ let deskDecoration = [
   [12,3.4,3.5,3.6,12,12,12,12],
 ]
 
-let deskPandC = [
+let PandC = [
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
@@ -45,6 +45,12 @@ let deskPandC = [
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
+]
+
+let bedDecoration = [
+  [12,12,12,12,12,12,12,12,12],
+  [12,1,3,5,7,12,12,12],
+  [12,2,4,6,8,12,12,12],
 ]
 
 // let world1Decoration = [
@@ -60,12 +66,12 @@ let deskPandC = [
 
 let world1Collision = [
   [1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,2,2,2,1],
+  [1,0,2,2,0,0,0,3,3,3,1],
   [1,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,1],
+  [1,2,0,0,0,0,4,4,4,4,1],
+  [1,2,0,0,0,0,4,4,4,4,1],
   [1,1,1,1,1,1,1,1,1,1,1],
 ]
 let world1CollisionTileSize = 64
@@ -84,31 +90,53 @@ let heroHeight = 100;
 let heroX = 3*world1TileSize;
 let heroY = 5*world1TileSize;
 let txt = false;
+let tile = 0;
 
 // Appelée une fois
 function setup() {
   createCanvas(worldtestBoard[0].length*world1TileSize,worldtestBoard.length*world1TileSize);
   
   worldtestTileDictionnary = { 
-    0: loadImage('assets/bord.jpg'),
-     12:loadImage('assets/Tuiles/Sol/Sol.png'),
+    0: createImage(1,1),
+     12:loadImage('assets/Tuiles/Sol/Sol2.png'),
      2:loadImage('assets/pierre.jpg'),
      3:loadImage('assets/lune.jpg')
   }
   worldDecorationTiles = { 
-    0: createImage(1,1),
+    0: loadImage('assets/bord.jpg'),
     12:createImage(1,1),
     13:loadImage('assets/leaves.png'),
     2:loadImage('assets/trunk.png'),
     3.1:loadImage('assets/Tuiles/Meuble/Bureau/Vue de haut/gauche.png'),
     3.2:loadImage('assets/Tuiles/Meuble/Bureau/Vue de haut/milieu.png'),
     3.3:loadImage('assets/Tuiles/Meuble/Bureau/Vue de haut/droit.png'),
-    2.1:loadImage('assets/Tuiles/Meuble/Commode/Vue de haut/d.png'),
+    2.1:loadImage('assets/Tuiles/Meuble/Commode/Vue de haut/g.png'),
     2.2:loadImage('assets/Tuiles/Meuble/Commode/Vue de haut/d.png'),
     "4.1":loadImage('assets/Tuiles/Meuble/biblio/Vu de haut/biblio haut 2@4x.png'),
     "4.2":loadImage('assets/Tuiles/Meuble/biblio/Vu de haut/biblio haut@4x.png'),
-    "porte":loadImage('assets/Tuiles/Porte/Vue de haut/vue de haut-22.png'),
-    1:createImage(1,1)
+    "porte":loadImage('assets/Tuiles/Porte/Vue de haut/vue de haut-21.png'),
+    "porte2":loadImage('assets/Tuiles/Porte/Vue de haut/vue de haut-22.png'),
+    
+    "5.1":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut g_1@4x.png'),
+    "5.2":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut g@4x.png'),
+    "5.3":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m@4x.png'),
+    "5.4":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m_3@4x.png'),
+    "5.5":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m_2@4x.png'),
+    "5.6":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m_1@4x.png'),
+    "5.7":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut d_1@4x.png'),
+    "5.8":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut d@4x.png'),
+  }
+
+  bedDecorationTiles = { 
+    12: createImage(1,1),
+    1:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut g@4x.png'),
+    2:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas g@4x.png'),
+    3:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut m-g@4x.png'),
+    4:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas m-g@4x.png'),
+    5:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut m@4x.png'),
+    6:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas m@4x.png'),
+    7:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut m-d@4x.png'),
+    8:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas m-d@4x.png'),
   }
 
   deskDecorationTiles = { 
@@ -122,16 +150,16 @@ function setup() {
   }
   
 
-  deskPandCTiles = {
-    12:loadImage('assets/Tuiles/Sol/Sol.png'),
+  PandCTiles = {
+    12:loadImage('assets/Tuiles/Mur/mur base@4x.png'),
   }
   hero = loadImage('assets/hero.png');
   // worlds = [world1Board,world2Board,worldDecoration]
   // tileDictionnaries = [world1TileDictionnary,world2TileDictionnary,worldDecorationTiles]
   // worldsTileSizes = [world1TileSize,world2TileSize,worldDecorationTileSize]
-  worlds = [worldtestBoard,world1Decoration,deskPandC,deskDecoration]
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,deskPandCTiles,deskDecorationTiles]
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,worldDecorationTileSize,deskDecorationTileSize]
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration]
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles]
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,worldDecorationTileSize,deskDecorationTileSize,deskDecorationTileSize]
 }
 
 function drawWorld(gameBoard,tileDictionnary,tileSize) {
@@ -181,9 +209,10 @@ function checkCollision(gameBoard,tileSize) {
         } 
       }
       
-      if (currentTileValue===2) {
+      if (currentTileValue===3 || currentTileValue===4) {
         if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
           txt = true;
+          tile=currentTileValue;
           return  true
         } 
       }
@@ -357,7 +386,21 @@ function draw() {
     text("M to interact", 370, 200);
     if (keyIsDown(UP_ARROW) && keyIsDown(77)) {
       currentWorld=2;
-      currentFrontWorld=3;
+      currentFrontWorld=tile;
+    }
+    if (keyIsDown(LEFT_ARROW)&& keyIsDown(77)) {
+      currentWorld=2;
+      currentFrontWorld=tile;
+    }
+  
+    if (keyIsDown(RIGHT_ARROW)&& keyIsDown(77)) {
+      currentWorld=2;
+      currentFrontWorld=tile;
+    }
+  
+    if (keyIsDown(DOWN_ARROW)&& keyIsDown(77)) {
+      currentWorld=2;
+      currentFrontWorld=tile;
     }
     txt = false;
   }
