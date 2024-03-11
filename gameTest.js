@@ -3,8 +3,6 @@
 
 // console.log(world2Board);
 
-let world1TileDictionnary = {}
-
 let worldtestBoard = [
   [0,0,0,0,0,0,0,0,0,0,0],
   [0,12,12,12,12,12,12,12,12,12,0],
@@ -15,7 +13,6 @@ let worldtestBoard = [
   [0,12,12,12,12,12,12,12,12,12,0],
   [0,0,0,0,0,0,0,0,0,0,0],
 ]
-let world1TileSize = 64
 
 let world1Decoration = [
   [0,0,0,0,0,0,0,0,0,0,0],
@@ -29,9 +26,15 @@ let world1Decoration = [
 ]
 
 let deskDecoration = [
-  [12,12,12,12,12,12,12,12,12],
-  [12,3.1,3.2,3.3,12,12,12,12],
-  [12,3.4,3.5,3.6,12,12,12,12],
+  [12,12,12,12,12,12,12,12],
+  [12,3.1,3.2,3.3,12,12,12],
+  [12,3.4,3.5,3.6,12,12,12],
+]
+
+let bilioDecoration = [
+  [12,1,2,12],
+  [12,3,4,12],
+  [12,5,6,12],
 ]
 
 let PandC = [
@@ -51,7 +54,7 @@ let bedDecoration = [
   [12,12,12,12,12,12,12,12,12],
   [12,1,3,5,7,12,12,12],
   [12,2,4,6,8,12,12,12],
-]
+  ]
 
 // let world1Decoration = [
 //   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -66,18 +69,21 @@ let bedDecoration = [
 
 let world1Collision = [
   [1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,2,2,0,0,0,3,3,3,1],
+  [1,0,6,6,0,0,0,3,3,3,1],
+  [1,7,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,1],
   [1,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,1],
-  [1,2,0,0,0,0,4,4,4,4,1],
-  [1,2,0,0,0,0,4,4,4,4,1],
+  [1,5,0,0,0,0,4,4,4,4,1],
+  [1,5,0,0,0,0,4,4,4,4,1],
   [1,1,1,1,1,1,1,1,1,1,1],
 ]
+
+let world1TileSize = 64
 let world1CollisionTileSize = 64
 let worldDecorationTileSize = 64
-let deskDecorationTileSize = 128
-
+let biblioDecorationTileSize = 170
+let bedDecorationTileSize = 170
+let deskDecorationTileSize = 140
 
 let currentFrontWorld=1
 let currentWorld = 0;
@@ -92,9 +98,35 @@ let heroY = 5*world1TileSize;
 let txt = false;
 let tile = 0;
 
+let side = 80;
+let y1 = 270;
+let x1 = 125;
+let w1 = 50;
+let h1 = 80;
+let ry2 = 50;
+let img;
+let bool = true;
+let bookDisplayed = false;
+let bookOpened = false;
+let zoneAvailable = true;
+
+let fade;
+let fadeAmount = 1;
+let page = 1;
+let opening=true
+
+canvasHeight = worldtestBoard.length*world1TileSize;
+canvasWidth = worldtestBoard[0].length*world1TileSize
+
+function preload(){
+  img2 = loadImage('assets/Subject.png');
+  img3 = loadImage('assets/openBook.png');
+  img4 = loadImage('assets/key.png');
+}
 // Appelée une fois
 function setup() {
-  createCanvas(worldtestBoard[0].length*world1TileSize,worldtestBoard.length*world1TileSize);
+  let canvas = createCanvas(canvasWidth,canvasHeight);
+  canvas.center();
   
   worldtestTileDictionnary = { 
     0: createImage(1,1),
@@ -148,18 +180,37 @@ function setup() {
     3.3:loadImage('assets/Tuiles/Meuble/Bureau/point and click/droite h.png'),
     3.6:loadImage('assets/Tuiles/Meuble/Bureau/point and click/droite b.png'),
   }
+
+  biblioDecorationTiles = { 
+    12: createImage(1,1),
+    1:loadImage('assets/Tuiles/Meuble/biblio/point & click/gauche h.png'),
+    2:loadImage('assets/Tuiles/Meuble/biblio/point & click/droit h.png'),
+    3:loadImage('assets/Tuiles/Meuble/biblio/point & click/gauche m.png'),
+    4:loadImage('assets/Tuiles/Meuble/biblio/point & click/droit m.png'),
+    5:loadImage('assets/Tuiles/Meuble/biblio/point & click/gauche b.png'),
+    6:loadImage('assets/Tuiles/Meuble/biblio/point & click/droit b.png'),
+  }
   
 
   PandCTiles = {
     12:loadImage('assets/Tuiles/Mur/mur base@4x.png'),
   }
-  hero = loadImage('assets/hero.png');
+  hero0 = loadImage('assets/hero.png');
+  hero1 = loadImage('assets/hero1.png');
+  currentHeroImage=hero0;
   // worlds = [world1Board,world2Board,worldDecoration]
   // tileDictionnaries = [world1TileDictionnary,world2TileDictionnary,worldDecorationTiles]
   // worldsTileSizes = [world1TileSize,world2TileSize,worldDecorationTileSize]
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration]
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles]
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,worldDecorationTileSize,deskDecorationTileSize,deskDecorationTileSize]
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration]
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles]
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize]
+
+  img2.resize(200,0);
+  img3.resize(400,0);
+  img4.resize(150,0)
+
+  textSize(25)
+  fade = 1
 }
 
 function drawWorld(gameBoard,tileDictionnary,tileSize) {
@@ -209,7 +260,7 @@ function checkCollision(gameBoard,tileSize) {
         } 
       }
       
-      if (currentTileValue===3 || currentTileValue===4) {
+      if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5) {
         if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
           txt = true;
           tile=currentTileValue;
@@ -307,76 +358,110 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
 };
 
 const checkKeys = (currentMap)=>{
-    // if (keyIsDown(LEFT_ARROW)) {
-    //   heroX -= 5;
-    //   if (checkCollision(world1Collision,world1CollisionTileSize)) {
-    //     heroX += 5;
-    //   } 
-    // }
-  
-    // if (keyIsDown(RIGHT_ARROW)) {
-    //   heroX += 5;
-    //   if (checkCollision(world1Collision,world1CollisionTileSize)) {
-    //     heroX -= 5;
-    //   } 
-    // }
-    
-    // if (keyIsDown(UP_ARROW)) {
-    //   heroY -= 5;
-    //   if (checkCollision(world1Collision,world1CollisionTileSize)) {
-    //     heroY += 5;
-    //   } 
-    // }
-
-    // if (keyIsDown(DOWN_ARROW)) {
-    //   heroY += 5;
-    //   if (checkCollision(world1Collision,world1CollisionTileSize)) {
-    //     heroY -= 5;
-    //   } 
-    // }
-
-  if (keyIsDown(LEFT_ARROW)) {
-    heroX -= 5;
-    if (checkCollision(world1Collision,world1CollisionTileSize)) {
-      heroX += 5;
-    } 
-  }
-
-  if (keyIsDown(RIGHT_ARROW)) {
-    heroX += 5;
-    if (checkCollision(world1Collision,world1CollisionTileSize)) {
+  if (currentFrontWorld===1) {
+    if (keyIsDown(LEFT_ARROW)) {
+      currentHeroImage=hero1;
       heroX -= 5;
-    } 
-  }
+      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+        heroX += 5;
+      } 
+    }
   
-  if (keyIsDown(UP_ARROW)) {
-    heroY -= 5;
-    if (checkCollision(world1Collision,world1CollisionTileSize)) {
-      heroY += 5;
-    } 
-  }
-
-  if (keyIsDown(DOWN_ARROW)) {
-    heroY += 5;
-    if (checkCollision(world1Collision,world1CollisionTileSize)) {
+    if (keyIsDown(RIGHT_ARROW)) {
+      heroX += 5;
+      currentHeroImage=hero0;
+      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+        heroX -= 5;
+      } 
+    }
+    
+    if (keyIsDown(UP_ARROW)) {
       heroY -= 5;
-    } 
-  }
+      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+        heroY += 5;
+      } 
+    }
   
+    if (keyIsDown(DOWN_ARROW)) {
+      heroY += 5;
+      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+        heroY -= 5;
+      } 
+    }
+  }
 }
+
+let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
+  if ((x>Nb1) && (x<Nb1+w)){
+     if ((y>Nb2) && (y<Nb2+h)){
+         return true;
+     }    
+   }
+    return false;
+ 
+ };
 
 // Appelé en continue après le setup
 function draw() {
-  checkKeys(currentWorld);
-  drawWorld(worlds[currentWorld],
-            tileDictionnaries[currentWorld],
-            worldsTileSizes[currentWorld]);
-  if (currentWorld!=2 && currentFrontWorld!=3) {
-    image(hero, heroX, heroY, heroWidth, heroHeight);
+  if (page===1) {
+    background(0);
+    fill(255, 0, 0, fade)
+    text("Wama Studio", 50,175)
+    text("presents", 50,225)
+    if (fade<0) fadeAmount=1; 
+  
+    if (fade>255) {
+      fadeAmount=-10; 
+    }
+    fade += fadeAmount; 
+    if (fade === 0 ) {
+      page=2
+    }
   }
-  drawFront(worlds[currentFrontWorld],
-    tileDictionnaries[currentFrontWorld],
-  worldsTileSizes[currentFrontWorld]);
+  if (page===2) {
+    background(0);
+    fill(255, 0, 0, fade)
+    text("In association with", 50,175)
+    text("Les intervenants", 50,225)
+    if (fade<0) fadeAmount=1; 
+  
+    if (fade>255) {
+      fadeAmount=-10; 
+    }
+    fade += fadeAmount;
+    if (fade === 0 ) {
+      page=3
+    }
+  }
+  if (page===3) {
+    background(0);
+    print(fade)
+    fill(255, 0, 0, fade)
+    text("DARVOZA", 50,175)
+    if (fade<0) fadeAmount=1; 
+  
+    if (fade>255) {
+      fadeAmount=-10; 
+    }
+    fade += fadeAmount; 
+    if (fade === 0 ) {
+      opening=false
+    }
+  }
+
+  if (bool && opening===false) {
+    checkKeys(currentWorld);
+    drawWorld(worlds[currentWorld],
+              tileDictionnaries[currentWorld],
+              worldsTileSizes[currentWorld]);
+    if (currentWorld!=2 && currentFrontWorld!=3) {
+      image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+    }
+    drawFront(worlds[currentFrontWorld],
+      tileDictionnaries[currentFrontWorld],
+    worldsTileSizes[currentFrontWorld]);
+  }
+  
   
   
 
@@ -405,7 +490,77 @@ function draw() {
     txt = false;
   }
   
-  
+  if (zoneAvailable && currentFrontWorld===5){
+
+    if (mouseIsPressed === true) {
+      if(pointIsInObjective(y1, x1, mouseX,mouseY, w1, h1)){
+        // imageMode(CORNER);
+        // image(bluredImg, 0, 0);
+        // bluredImg.resize(1440, 900);
+        // imageMode(CENTER);
+        // image(img2, canvasWidth/2, canvasHeight/2);
+        imageMode(CENTER);
+        image(img2,canvasWidth/2, canvasHeight/2);
+        bool = false;
+        setTimeout(() => {
+          bookDisplayed = true;
+        }, 500);
+      }
+    }
+
+    if (bookDisplayed) {
+      if (mouseIsPressed === true) {
+        if (pointIsInObjective(0, 0, mouseX,mouseY, 442 , 514)) {
+          // imageMode(CORNER);
+          // image(bluredImg, 0, 0);
+          // bluredImg.resize(1440, 900);
+          imageMode(CENTER);
+          image(img3, canvasWidth/2, canvasHeight/2);
+          image(img4, canvasWidth/2+90, canvasHeight/2);
+          setTimeout(() => {
+            bookOpened = true;
+          }, 500);
+        }
+      }
+    }
+
+    if (bookOpened) {
+      if (mouseIsPressed === true) {
+        if (pointIsInObjective(canvasWidth/2, canvasHeight/2, mouseX,mouseY, 150,50)) {
+          //imageMode(CORNER);
+          // image(bluredImg, 0, 0);
+          // bluredImg.resize(1440, 900);
+          imageMode(CENTER);
+          image(img3, canvasWidth/2, canvasHeight/2);
+          zoneAvailable = false;
+        }
+      }
+    }
+  }
+
+  // if (mouseIsPressed === true) {
+  //   if (pointIsInObjective(0, 0, mouseX,mouseY, 500,900)) {
+  //     bool = true;
+  //   }
+    
+  // }
+  if (bool && zoneAvailable===false) {
+    imageMode(CORNER);
+    drawFront(worlds[currentFrontWorld],
+      tileDictionnaries[currentFrontWorld],
+    worldsTileSizes[currentFrontWorld]);
+    image(key, 1320, 125);
+    key.resize(100,40) 
+    
+  }else if (bool && opening===false){
+    imageMode(CORNER);
+    drawFront(worlds[currentFrontWorld],
+      tileDictionnaries[currentFrontWorld],
+      worldsTileSizes[currentFrontWorld]);
+    bookDisplayed = false;
+  }
+  // fill("red");
+  // rect(0, 0, 100,60);
   //background(20);
 }
 
