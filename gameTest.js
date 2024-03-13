@@ -1,30 +1,5 @@
 //import ('/Users/william-johnguenon/Documents/Goblin/Projet Final/Collision/world2.js');
 // import ('world2.js');
-
-// console.log(world2Board);
-
-let worldtestBoard = [
-  [0,0,0,0,0,0,0,0,0,0,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,0,0,0,0,0,0,0,0,0,0],
-]
-
-let world1Decoration = [
-  [0,0,0,0,0,0,0,0,0,0,0],
-  [0,12,2.1,2.2,12,12,12,3.1,3.2,3.3,0],
-  [0,"porte2",12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,12,12,12,12,12,12,12,12,12,0],
-  [0,"4.1",12,12,12,12,"5.7","5.5","5.3","5.1",0],
-  [0,"4.2",12,12,"porte",12,"5.8","5.6","5.4","5.2",0],
-  [0,0,0,0,0,0,0,0,0,0,0],
-]
-
 let deskDecoration = [
   [12,12,12,12,12,12,12,12],
   [12,3.1,3.2,3.3,12,12,12],
@@ -32,8 +7,15 @@ let deskDecoration = [
 ]
 
 let bilioDecoration = [
+  [0,1,2,3,0],
+  [0,4,5,6,0],
+  [0,7,8,9,0],
+  [0,10,11,12,0],
+]
+
+let furnitureDecoration = [
+  [12,12,12,12],
   [12,1,2,12],
-  [12,3,4,12],
   [12,5,6,12],
 ]
 
@@ -47,43 +29,21 @@ let PandC = [
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
-  [12,12,12,12,12,12,12,12,12,12,12],
 ]
 
 let bedDecoration = [
   [12,12,12,12,12,12,12,12,12],
-  [12,1,3,5,7,12,12,12],
-  [12,2,4,6,8,12,12,12],
+  [1,3,5,7,12,12,12],
+  [2,4,6,8,12,12,12],
   ]
-
-// let world1Decoration = [
-//   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-//   [0,2.1,2.2,12,12,12,3.1,3.2,3.3,12,0],
-//   [0,"porte",12,12,12,12,3.4,3.5,3.6,12,0],
-//   [0,12,12,12,12,12,12,12,12,12,0],
-//   [0,12,12,12,12,12,12,12,12,12,0],
-//   [0,"4.1",12,12,12,12,12,12,12,12,0],
-//   [0,"4.2",12,12,"porte",12,12,12,12,12,0],
-//   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-// ]
-
-let world1Collision = [
-  [1,1,1,1,1,1,1,1,1,1,1],
-  [1,0,6,6,0,0,0,3,3,3,1],
-  [1,7,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,0,1],
-  [1,5,0,0,0,0,4,4,4,4,1],
-  [1,5,0,0,0,0,4,4,4,4,1],
-  [1,1,1,1,1,1,1,1,1,1,1],
-]
 
 let world1TileSize = 64
 let world1CollisionTileSize = 64
 let worldDecorationTileSize = 64
-let biblioDecorationTileSize = 170
-let bedDecorationTileSize = 170
+let biblioDecorationTileSize = 145
+let bedDecorationTileSize = 180
 let deskDecorationTileSize = 140
+let furnitureDecorationTileSize = 180
 
 let currentFrontWorld=1
 let currentWorld = 0;
@@ -97,6 +57,7 @@ let heroX = 3*world1TileSize;
 let heroY = 5*world1TileSize;
 let txt = false;
 let tile = 0;
+let irotate = 0;
 
 let side = 80;
 let y1 = 270;
@@ -109,107 +70,123 @@ let bool = true;
 let bookDisplayed = false;
 let bookOpened = false;
 let zoneAvailable = true;
+let doorClosed=true;
 
 let fade;
 let fadeAmount = 1;
 let page = 1;
-let opening=true
+//let opening=true
 
-canvasHeight = worldtestBoard.length*world1TileSize;
-canvasWidth = worldtestBoard[0].length*world1TileSize
+canvasHeight = PandC.length*world1TileSize;
+canvasWidth = PandC[0].length*world1TileSize
 
 function preload(){
   img2 = loadImage('assets/Subject.png');
   img3 = loadImage('assets/openBook.png');
   img4 = loadImage('assets/key.png');
+  fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
 }
 // Appelée une fois
 function setup() {
   let canvas = createCanvas(canvasWidth,canvasHeight);
   canvas.center();
-  
+
   worldtestTileDictionnary = { 
     0: createImage(1,1),
-     12:loadImage('assets/Tuiles/Sol/Sol2.png'),
-     2:loadImage('assets/pierre.jpg'),
-     3:loadImage('assets/lune.jpg')
-  }
+    12:loadImage('assets/Tuiles/Sol/Chambre/Sol2.png'),
+  };
   worldDecorationTiles = { 
     0: loadImage('assets/bord.jpg'),
     12:createImage(1,1),
     13:loadImage('assets/leaves.png'),
     2:loadImage('assets/trunk.png'),
-    3.1:loadImage('assets/Tuiles/Meuble/Bureau/Vue de haut/gauche.png'),
-    3.2:loadImage('assets/Tuiles/Meuble/Bureau/Vue de haut/milieu.png'),
-    3.3:loadImage('assets/Tuiles/Meuble/Bureau/Vue de haut/droit.png'),
-    2.1:loadImage('assets/Tuiles/Meuble/Commode/Vue de haut/g.png'),
-    2.2:loadImage('assets/Tuiles/Meuble/Commode/Vue de haut/d.png'),
-    "4.1":loadImage('assets/Tuiles/Meuble/biblio/Vu de haut/biblio haut 2@4x.png'),
-    "4.2":loadImage('assets/Tuiles/Meuble/biblio/Vu de haut/biblio haut@4x.png'),
-    "porte":loadImage('assets/Tuiles/Porte/Vue de haut/vue de haut-21.png'),
-    "porte2":loadImage('assets/Tuiles/Porte/Vue de haut/vue de haut-22.png'),
+    3.1:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Vue de haut/gauche.png'),
+    3.2:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Vue de haut/milieu.png'),
+    3.3:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Vue de haut/droit.png'),
+
+    2.1:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Vue de haut/D.png'),
+    2.2:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Vue de haut/G.png'),
+
+    "4.1":loadImage('assets/Tuiles/Meuble/Chambre/biblio/Vue de haut/biblio haut copy@4x.png'),
+    "4.2":loadImage('assets/Tuiles/Meuble/Chambre/biblio/Vue de haut/biblio haut@4x.png'),
+    "4.3":loadImage('assets/Tuiles/Meuble/Chambre/biblio/Vue de haut/biblio haut 2@4x.png'),
+
+    "porte":loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-21.png'),
+    "porte2":loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-22.png'),
     
-    "5.1":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut g_1@4x.png'),
-    "5.2":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut g@4x.png'),
-    "5.3":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m@4x.png'),
-    "5.4":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m_3@4x.png'),
-    "5.5":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m_2@4x.png'),
-    "5.6":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut m_1@4x.png'),
-    "5.7":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut d_1@4x.png'),
-    "5.8":loadImage('assets/Tuiles/Meuble/Lit/Vue de haut/vue haut d@4x.png'),
-  }
+    "5.1":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut g_1@4x.png'),
+    "5.2":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut g@4x.png'),
+    "5.3":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut m@4x.png'),
+    "5.4":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut m_3@4x.png'),
+    "5.5":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut m_2@4x.png'),
+    "5.6":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut m_1@4x.png'),
+    "5.7":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut d_1@4x.png'),
+    "5.8":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut d@4x.png'),
+  };
 
   bedDecorationTiles = { 
     12: createImage(1,1),
-    1:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut g@4x.png'),
-    2:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas g@4x.png'),
-    3:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut m-g@4x.png'),
-    4:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas m-g@4x.png'),
-    5:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut m@4x.png'),
-    6:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas m@4x.png'),
-    7:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit haut m-d@4x.png'),
-    8:loadImage('assets/Tuiles/Meuble/Lit/Point & click/lit bas m-d@4x.png'),
+    1:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut g@4x.png'),
+    2:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas g@4x.png'),
+    3:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m-g@4x.png'),
+    4:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m-g@4x.png'),
+    5:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m@4x.png'),
+    6:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m@4x.png'),
+    7:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m-d@4x.png'),
+    8:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m-d@4x.png'),
   }
 
   deskDecorationTiles = { 
     12: createImage(1,1),
-    3.1:loadImage('assets/Tuiles/Meuble/Bureau/point and click/gauche h.png'),
-    3.4:loadImage('assets/Tuiles/Meuble/Bureau/point and click/gauche b.png'),
-    3.2:loadImage('assets/Tuiles/Meuble/Bureau/point and click/milieu h.png'),
-    3.5:loadImage('assets/Tuiles/Meuble/Bureau/point and click/milieu b.png'),
-    3.3:loadImage('assets/Tuiles/Meuble/Bureau/point and click/droite h.png'),
-    3.6:loadImage('assets/Tuiles/Meuble/Bureau/point and click/droite b.png'),
+    3.1:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/gauche h.png'),
+    3.4:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/gauche b.png'),
+    3.2:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/milieu h.png'),
+    3.5:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/milieu b.png'),
+    3.3:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/droite h.png'),
+    3.6:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/droite b.png'),
   }
 
   biblioDecorationTiles = { 
+    0: createImage(1,1),
+    1:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-h@4x.png'),
+    2:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-h@4x.png'),
+    3:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-h@4x.png'),
+    4:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m_1@4x.png'),
+    5:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m@4x.png'),
+    6:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m_1@4x.png'),
+    7:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m@4x.png'),
+    8:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m_1@4x.png'),
+    9:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m@4x.png'),
+    10:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-b@4x.png'),
+    11:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-b@4x.png'),
+    12:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-b@4x.png'),
+  }
+
+  furnitureDecorationTile = { 
     12: createImage(1,1),
-    1:loadImage('assets/Tuiles/Meuble/biblio/point & click/gauche h.png'),
-    2:loadImage('assets/Tuiles/Meuble/biblio/point & click/droit h.png'),
-    3:loadImage('assets/Tuiles/Meuble/biblio/point & click/gauche m.png'),
-    4:loadImage('assets/Tuiles/Meuble/biblio/point & click/droit m.png'),
-    5:loadImage('assets/Tuiles/Meuble/biblio/point & click/gauche b.png'),
-    6:loadImage('assets/Tuiles/Meuble/biblio/point & click/droit b.png'),
+    1:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Point and click/gauche h.png'),
+    2:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Point and click/droit h.png'),
+    5:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Point and click/gauche b.png'),
+    6:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Point and click/droit b.png'),
   }
   
 
   PandCTiles = {
-    12:loadImage('assets/Tuiles/Mur/mur base@4x.png'),
+    12:loadImage('assets/Tuiles/Mur/Chambre/mur base@4x.png'),
   }
-  hero0 = loadImage('assets/hero.png');
-  hero1 = loadImage('assets/hero1.png');
+  hero0 = loadImage('assets/Tuiles/Personnages/Garçon/Vue dessus.png');
   currentHeroImage=hero0;
   // worlds = [world1Board,world2Board,worldDecoration]
   // tileDictionnaries = [world1TileDictionnary,world2TileDictionnary,worldDecorationTiles]
   // worldsTileSizes = [world1TileSize,world2TileSize,worldDecorationTileSize]
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration]
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles]
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize]
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration]
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile]
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize]
 
   img2.resize(200,0);
   img3.resize(400,0);
   img4.resize(150,0)
 
-  textSize(25)
   fade = 1
 }
 
@@ -260,10 +237,22 @@ function checkCollision(gameBoard,tileSize) {
         } 
       }
       
-      if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5) {
+      if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6) {
         if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
           txt = true;
           tile=currentTileValue;
+          return  true
+        } 
+      }
+
+      if (currentTileValue===7) {
+        if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+          if (doorClosed===false) {
+            currentWorld=2;
+            currentFrontWorld=2;
+            return  true
+          }
+          //txt = true;
           return  true
         } 
       }
@@ -357,14 +346,17 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
 
 };
 
+/////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
   if (currentFrontWorld===1) {
     if (keyIsDown(LEFT_ARROW)) {
-      currentHeroImage=hero1;
+      //currentHeroImage=hero1;
+      //irotate -= 5;
       heroX -= 5;
       if (checkCollision(world1Collision,world1CollisionTileSize)) {
         heroX += 5;
       } 
+      //console.log(irotate);
     }
   
     if (keyIsDown(RIGHT_ARROW)) {
@@ -388,8 +380,15 @@ const checkKeys = (currentMap)=>{
         heroY -= 5;
       } 
     }
+  }else{
+    if (keyIsDown(80)) {
+      currentWorld=0;
+      bool=true;
+      currentFrontWorld=1;  //retour au monde de décoration de base
+    }
   }
 }
+/////////////////////////////////////////////////////
 
 let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
   if ((x>Nb1) && (x<Nb1+w)){
@@ -399,62 +398,85 @@ let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
    }
     return false;
  
- };
+};
+
 
 // Appelé en continue après le setup
 function draw() {
-  if (page===1) {
-    background(0);
-    fill(255, 0, 0, fade)
-    text("Wama Studio", 50,175)
-    text("presents", 50,225)
-    if (fade<0) fadeAmount=1; 
+  checkKeys(currentWorld);
+  let save = JSON.parse(localStorage.getItem("save"));      // SAVE OPENING
   
-    if (fade>255) {
-      fadeAmount=-10; 
+  ///////////////////////////////////////////////////// OPENING
+  if (save!==1) {
+    if (page===1) {
+      background(0);
+      fill(255, 0, 0, fade)
+      textSize(25)
+      text("Wama Studio", 50,175)
+      text("presents", 50,225)
+      if (fade<0) fadeAmount=1; 
+    
+      if (fade>255) {
+        fadeAmount=-10; 
+      }
+      fade += fadeAmount; 
+      if (fade === 0 ) {
+        page=2
+      }
     }
-    fade += fadeAmount; 
-    if (fade === 0 ) {
-      page=2
+    if (page===2) {
+      background(0);
+      fill(255, 0, 0, fade)
+      textSize(25)
+      text("In association with", 50,175)
+      text("Les intervenants", 50,225)
+      if (fade<0) fadeAmount=1; 
+    
+      if (fade>255) {
+        fadeAmount=-10; 
+      }
+      fade += fadeAmount;
+      if (fade === 0 ) {
+        page=3
+      }
+    }
+    if (page===3) {
+      background(0);
+      fill(255, 0, 0, fade)
+      textFont(fontRegular);
+      textSize(100)
+      text("DARVOZA", 50,175)
+      if (fade<0) fadeAmount=1; 
+    
+      if (fade>255) {
+        fadeAmount=-10; 
+      }
+      fade += fadeAmount; 
+      if (fade === 0 ) {
+        //opening=false
+        localStorage.setItem("save", JSON.stringify(1));
+      }
     }
   }
-  if (page===2) {
-    background(0);
-    fill(255, 0, 0, fade)
-    text("In association with", 50,175)
-    text("Les intervenants", 50,225)
-    if (fade<0) fadeAmount=1; 
-  
-    if (fade>255) {
-      fadeAmount=-10; 
-    }
-    fade += fadeAmount;
-    if (fade === 0 ) {
-      page=3
-    }
-  }
-  if (page===3) {
-    background(0);
-    print(fade)
-    fill(255, 0, 0, fade)
-    text("DARVOZA", 50,175)
-    if (fade<0) fadeAmount=1; 
-  
-    if (fade>255) {
-      fadeAmount=-10; 
-    }
-    fade += fadeAmount; 
-    if (fade === 0 ) {
-      opening=false
-    }
-  }
+  ////////////////////////////////////////////////////////// 
 
-  if (bool && opening===false) {
-    checkKeys(currentWorld);
+  ////////////////////////////////////////////////////////// DRAW WORLDS
+  if (bool && save===1) {
+    imageMode(CORNER);
+    if (currentWorld===0) {
+      background(0); 
+    }
     drawWorld(worlds[currentWorld],
               tileDictionnaries[currentWorld],
               worldsTileSizes[currentWorld]);
     if (currentWorld!=2 && currentFrontWorld!=3) {
+      // imageMode(CENTER);
+      // angleMode(DEGREES); 
+      // push()
+      // translate(heroY, heroX);
+      // rotate(irotate);
+      // image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+      // pop()
       image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
     }
     drawFront(worlds[currentFrontWorld],
@@ -462,9 +484,10 @@ function draw() {
     worldsTileSizes[currentFrontWorld]);
   }
   
+  //////////////////////////////////////////////////////////
   
   
-
+  ////////////////////////////////////////////////////////// TEST CONTACT WITH INTERACTABLE OBJECTS
   if (txt) {
     textSize(22);
     fill('white');
@@ -489,11 +512,14 @@ function draw() {
     }
     txt = false;
   }
-  
+  //////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////   POINT AND CLICK
   if (zoneAvailable && currentFrontWorld===5){
 
     if (mouseIsPressed === true) {
       if(pointIsInObjective(y1, x1, mouseX,mouseY, w1, h1)){
+        bool = false;
         // imageMode(CORNER);
         // image(bluredImg, 0, 0);
         // bluredImg.resize(1440, 900);
@@ -501,10 +527,11 @@ function draw() {
         // image(img2, canvasWidth/2, canvasHeight/2);
         imageMode(CENTER);
         image(img2,canvasWidth/2, canvasHeight/2);
-        bool = false;
         setTimeout(() => {
           bookDisplayed = true;
         }, 500);
+        fill('white');
+        text("P to exit", 200, 390);
       }
     }
 
@@ -530,6 +557,7 @@ function draw() {
           //imageMode(CORNER);
           // image(bluredImg, 0, 0);
           // bluredImg.resize(1440, 900);
+          doorClosed=false;
           imageMode(CENTER);
           image(img3, canvasWidth/2, canvasHeight/2);
           zoneAvailable = false;
@@ -538,30 +566,23 @@ function draw() {
     }
   }
 
-  // if (mouseIsPressed === true) {
-  //   if (pointIsInObjective(0, 0, mouseX,mouseY, 500,900)) {
-  //     bool = true;
-  //   }
+  // if (bool && zoneAvailable===false) {
+  //   imageMode(CORNER);
+  //   drawFront(worlds[currentFrontWorld],
+  //     tileDictionnaries[currentFrontWorld],
+  //   worldsTileSizes[currentFrontWorld]);
+  //   image(key, 1320, 125);
+  //   key.resize(100,40) 
     
+  // }else if (bool && save===1){
+  //   imageMode(CORNER);
+  //   drawFront(worlds[currentFrontWorld],
+  //     tileDictionnaries[currentFrontWorld],
+  //     worldsTileSizes[currentFrontWorld]);
+  //   bookDisplayed = false;
   // }
-  if (bool && zoneAvailable===false) {
-    imageMode(CORNER);
-    drawFront(worlds[currentFrontWorld],
-      tileDictionnaries[currentFrontWorld],
-    worldsTileSizes[currentFrontWorld]);
-    image(key, 1320, 125);
-    key.resize(100,40) 
-    
-  }else if (bool && opening===false){
-    imageMode(CORNER);
-    drawFront(worlds[currentFrontWorld],
-      tileDictionnaries[currentFrontWorld],
-      worldsTileSizes[currentFrontWorld]);
-    bookDisplayed = false;
-  }
-  // fill("red");
-  // rect(0, 0, 100,60);
-  //background(20);
+
+  //////////////////////////////////////////////////////////
 }
 
 
