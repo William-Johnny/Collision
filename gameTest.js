@@ -6,11 +6,15 @@ let deskDecoration = [
   [12,3.4,3.5,3.6,12,12,12],
 ]
 
+// let bilioDecoration = [
+//   [0,1,2,3,0],
+//   [0,4,5,6,0],
+//   [0,7,8,9,0],
+//   [0,10,11,12,0],
+// ]
+
 let bilioDecoration = [
-  [0,1,2,3,0],
-  [0,4,5,6,0],
-  [0,7,8,9,0],
-  [0,10,11,12,0],
+  [1],
 ]
 
 let furnitureDecoration = [
@@ -40,7 +44,7 @@ let bedDecoration = [
 let world1TileSize = 64
 let world1CollisionTileSize = 64
 let worldDecorationTileSize = 64
-let biblioDecorationTileSize = 145
+let biblioDecorationTileSize = 580
 let bedDecorationTileSize = 180
 let deskDecorationTileSize = 140
 let furnitureDecorationTileSize = 180
@@ -52,7 +56,7 @@ let tileDictionnaries = [];
 let worldsTileSizes = [];
 let hero;
 let heroWidth = world1TileSize;
-let heroHeight = 100;
+let heroHeight = world1TileSize;
 let heroX = 3*world1TileSize;
 let heroY = 5*world1TileSize;
 let txt = false;
@@ -60,10 +64,10 @@ let tile = 0;
 let irotate = 0;
 
 let side = 80;
-let y1 = 270;
-let x1 = 125;
-let w1 = 50;
-let h1 = 80;
+let y1 = 410;
+let x1 = 415;
+let w1 = 20;
+let h1 = 50;
 let ry2 = 50;
 let img;
 let bool = true;
@@ -71,6 +75,7 @@ let bookDisplayed = false;
 let bookOpened = false;
 let zoneAvailable = true;
 let doorClosed=true;
+let menuDisplayed=false;
 
 let fade;
 let fadeAmount = 1;
@@ -84,6 +89,9 @@ function preload(){
   img2 = loadImage('assets/Subject.png');
   img3 = loadImage('assets/openBook.png');
   img4 = loadImage('assets/key.png');
+  biblio = loadImage("assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio.png");
+  inventory = loadImage('assets/Tuiles/Inventaire/1.png');
+  menu = loadImage('assets/Tuiles/Menu.png');
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
 }
 // Appelée une fois
@@ -142,24 +150,25 @@ function setup() {
     3.4:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/gauche b.png'),
     3.2:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/milieu h.png'),
     3.5:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/milieu b.png'),
-    3.3:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/droite h.png'),
-    3.6:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/droite b.png'),
+    3.3:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/droit h.png'),
+    3.6:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Point and click/droit b.png'),
   }
 
   biblioDecorationTiles = { 
     0: createImage(1,1),
-    1:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-h@4x.png'),
-    2:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-h@4x.png'),
-    3:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-h@4x.png'),
-    4:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m_1@4x.png'),
-    5:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m@4x.png'),
-    6:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m_1@4x.png'),
-    7:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m@4x.png'),
-    8:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m_1@4x.png'),
-    9:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m@4x.png'),
-    10:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-b@4x.png'),
-    11:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-b@4x.png'),
-    12:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-b@4x.png'),
+    // 1:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-h@4x.png'),
+    // 2:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-h@4x.png'),
+    // 3:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-h@4x.png'),
+    // 4:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m_1@4x.png'),
+    // 5:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m@4x.png'),
+    // 6:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m_1@4x.png'),
+    // 7:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m@4x.png'),
+    // 8:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m_1@4x.png'),
+    // 9:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m@4x.png'),
+    // 10:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-b@4x.png'),
+    // 11:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-b@4x.png'),
+    // 12:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-b@4x.png'),
+    1:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio.png'),
   }
 
   furnitureDecorationTile = { 
@@ -175,6 +184,9 @@ function setup() {
     12:loadImage('assets/Tuiles/Mur/Chambre/mur base@4x.png'),
   }
   hero0 = loadImage('assets/Tuiles/Personnages/Garçon/Vue dessus.png');
+  hero1 = loadImage('assets/Tuiles/Personnages/Garçon/g.png');
+  hero2 = loadImage('assets/Tuiles/Personnages/Garçon/d.png');
+  hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
   // worlds = [world1Board,world2Board,worldDecoration]
   // tileDictionnaries = [world1TileDictionnary,world2TileDictionnary,worldDecorationTiles]
@@ -186,6 +198,7 @@ function setup() {
   img2.resize(200,0);
   img3.resize(400,0);
   img4.resize(150,0)
+  biblio.resize(310,0)
 
   fade = 1
 }
@@ -350,7 +363,7 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
 const checkKeys = (currentMap)=>{
   if (currentFrontWorld===1) {
     if (keyIsDown(LEFT_ARROW)) {
-      //currentHeroImage=hero1;
+      currentHeroImage=hero1;
       //irotate -= 5;
       heroX -= 5;
       if (checkCollision(world1Collision,world1CollisionTileSize)) {
@@ -360,14 +373,15 @@ const checkKeys = (currentMap)=>{
     }
   
     if (keyIsDown(RIGHT_ARROW)) {
+      currentHeroImage=hero2;
       heroX += 5;
-      currentHeroImage=hero0;
       if (checkCollision(world1Collision,world1CollisionTileSize)) {
         heroX -= 5;
       } 
     }
     
     if (keyIsDown(UP_ARROW)) {
+      currentHeroImage=hero0;
       heroY -= 5;
       if (checkCollision(world1Collision,world1CollisionTileSize)) {
         heroY += 5;
@@ -375,6 +389,7 @@ const checkKeys = (currentMap)=>{
     }
   
     if (keyIsDown(DOWN_ARROW)) {
+      currentHeroImage=hero3;
       heroY += 5;
       if (checkCollision(world1Collision,world1CollisionTileSize)) {
         heroY -= 5;
@@ -461,28 +476,38 @@ function draw() {
   ////////////////////////////////////////////////////////// 
 
   ////////////////////////////////////////////////////////// DRAW WORLDS
-  if (bool && save===1) {
+  if (bool && save===1 && currentFrontWorld===5) {
     imageMode(CORNER);
-    if (currentWorld===0) {
-      background(0); 
-    }
     drawWorld(worlds[currentWorld],
-              tileDictionnaries[currentWorld],
-              worldsTileSizes[currentWorld]);
-    if (currentWorld!=2 && currentFrontWorld!=3) {
-      // imageMode(CENTER);
-      // angleMode(DEGREES); 
-      // push()
-      // translate(heroY, heroX);
-      // rotate(irotate);
-      // image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
-      // pop()
-      image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+      tileDictionnaries[currentWorld],
+      worldsTileSizes[currentWorld]);
+    image(biblio, 180, 0);
+    
+  }else{
+    if (bool && save===1) {
+      imageMode(CORNER);
+      if (currentWorld===0) {
+        background(0); 
+      }
+      drawWorld(worlds[currentWorld],
+                tileDictionnaries[currentWorld],
+                worldsTileSizes[currentWorld]);
+      if (currentWorld!=2 && currentFrontWorld!=3) {
+        // imageMode(CENTER);
+        // angleMode(DEGREES); 
+        // push()
+        // translate(heroY, heroX);
+        // rotate(irotate);
+        // image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+        // pop()
+        image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+      }
+      drawFront(worlds[currentFrontWorld],
+        tileDictionnaries[currentFrontWorld],
+      worldsTileSizes[currentFrontWorld]);
     }
-    drawFront(worlds[currentFrontWorld],
-      tileDictionnaries[currentFrontWorld],
-    worldsTileSizes[currentFrontWorld]);
   }
+  
   
   //////////////////////////////////////////////////////////
   
@@ -514,6 +539,11 @@ function draw() {
   }
   //////////////////////////////////////////////////////////
 
+  if (currentFrontWorld>2) {
+    fill('white');
+    text("P to exit", 300, 565);
+  }
+
   //////////////////////////////////////////////////////////   POINT AND CLICK
   if (zoneAvailable && currentFrontWorld===5){
 
@@ -530,8 +560,6 @@ function draw() {
         setTimeout(() => {
           bookDisplayed = true;
         }, 500);
-        fill('white');
-        text("P to exit", 200, 390);
       }
     }
 
@@ -553,7 +581,7 @@ function draw() {
 
     if (bookOpened) {
       if (mouseIsPressed === true) {
-        if (pointIsInObjective(canvasWidth/2, canvasHeight/2, mouseX,mouseY, 150,50)) {
+        if (pointIsInObjective(canvasWidth/2+15, canvasHeight/2-25, mouseX,mouseY, 150,50)) {
           //imageMode(CORNER);
           // image(bluredImg, 0, 0);
           // bluredImg.resize(1440, 900);
@@ -566,23 +594,55 @@ function draw() {
     }
   }
 
-  // if (bool && zoneAvailable===false) {
-  //   imageMode(CORNER);
-  //   drawFront(worlds[currentFrontWorld],
-  //     tileDictionnaries[currentFrontWorld],
-  //   worldsTileSizes[currentFrontWorld]);
-  //   image(key, 1320, 125);
-  //   key.resize(100,40) 
-    
-  // }else if (bool && save===1){
-  //   imageMode(CORNER);
-  //   drawFront(worlds[currentFrontWorld],
-  //     tileDictionnaries[currentFrontWorld],
-  //     worldsTileSizes[currentFrontWorld]);
-  //   bookDisplayed = false;
-  // }
-
   //////////////////////////////////////////////////////////
+
+  if (menuDisplayed) {
+    background(0);
+    image(menu, 0, 0);
+  }
 }
 
+let s2 = function( sketch ) {
+
+  sketch.preload = function(){
+    theKey = loadImage('assets/key.png');
+  }
+
+  sketch.setup = function() {
+   let canvas2 = sketch.createCanvas(160, 693);
+   canvas2.id('inventory');
+   canvas2.position(100,200);
+ }
+
+ sketch.mouseClicked = function() {
+  if (!menuDisplayed) {
+    if ((mouseX>-380) && (mouseX<-380+120)){
+      if ((mouseY>-50) && (mouseY<-50+50)){
+        menuDisplayed = true;
+      }    
+    }
+    
+  }else if (menuDisplayed) {
+    if ((mouseX>-380) && (mouseX<-380+120)){
+      if ((mouseY>-50) && (mouseY<-50+50)){
+        menuDisplayed = false;
+      }    
+    }
+  }
+ };
+
+ sketch.draw = function() {
+   //for canvas 2
+   sketch.background(100);
+   sketch.imageMode(CORNER);
+   sketch.image(inventory, 0, 0);
+   if (doorClosed===false) {
+    sketch.image(theKey,  30, 240,100,40);
+   }
+    //sketch.rect(-50,-300,100,50);
+ }
+};
+
+// create the second instance of p5 and pass in the function for sketch 2
+new p5(s2);
 

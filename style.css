@@ -7,6 +7,10 @@ canvas {
   display: block;
 }
 
+#inventory{
+  border-radius: 12px;
+}
+
 body{
   background-color: black;
 }
