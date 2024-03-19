@@ -16,6 +16,14 @@ let furnitureDecoration = [
   [12,5,6,12],
 ]
 
+let doorDecoration = [
+  [12,12,12,12],
+  [12,12,1,1,12],
+  [12,12,1,1,12],
+  [12,12,3,1,12],
+  [12,12,1,1,12],
+]
+
 let PandC = [
   [12,12,12,12,12,12,12,12,12,12,12],
   [12,12,12,12,12,12,12,12,12,12,12],
@@ -41,6 +49,7 @@ let biblioDecorationTileSize = 580
 let bedDecorationTileSize = 180
 let deskDecorationTileSize = 140
 let furnitureDecorationTileSize = 180
+let doorDecorationTileSize = 120
 
 let currentFrontWorld=1
 let currentWorld = 0;
@@ -165,6 +174,12 @@ function setup() {
     5:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Point and click/gauche b.png'),
     6:loadImage('assets/Tuiles/Meuble/Chambre/Commode/Point and click/droit b.png'),
   }
+
+  doorDecorationTile = { 
+    12: createImage(1,1),
+    1:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    3:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte poignée.png')
+  }
   
 
   PandCTiles = {
@@ -176,9 +191,9 @@ function setup() {
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
   
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration]
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile]
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize]
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration]
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile]
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize]
 
   img2.resize(200,0);
   img3.resize(400,0);
@@ -253,13 +268,15 @@ function checkCollision(gameBoard,tileSize) {
 
       if (currentTileValue===7) {
         if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-          if (doorClosed===false) {
-            currentWorld=2;
-            currentFrontWorld=2;
-            return  true
-          }
-          //txt = true;
-          return  true
+          // if (doorClosed===false) {
+          //   currentWorld=2;
+          //   currentFrontWorld=2;
+          //   return  true
+          // }
+          // //txt = true;
+          // return  true
+          txt = true;
+          tile=currentTileValue;
         } 
       }
     }
@@ -599,10 +616,11 @@ function draw() {
   if (menuDisplayed) {
     background(0);
     image(menu, 0, 0);
+    
   }
 }
 
-let newCanvas = () => {
+let inventoryCanvas = () => {
   console.log("ok");
   let s2 = function( sketch ) {
 
@@ -645,13 +663,32 @@ let newCanvas = () => {
     }
   };
   
-  // create the second instance of p5 and pass in the function for sketch 2
   new p5(s2);
+
+};
+
+let menuCanvas = () => {
+  let bg;
+  let s3 = function( sketch ) {
+  
+    sketch.setup = function() {
+      bg = loadImage('assets/moonwalk.jpg');
+      let menuCanvas = sketch.createCanvas(661, 483);
+      //canvas2.id('inventory');
+      menuCanvas.position(100,200);
+    }
+  
+    sketch.draw = function() {
+      background(bg);
+    }
+  };
+  
+  new p5(s3);
 
 };
 
 let save = JSON.parse(localStorage.getItem("save")); 
 
 if (save===1) {
-  newCanvas();
+  inventoryCanvas();
 }
