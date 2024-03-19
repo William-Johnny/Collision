@@ -6,13 +6,6 @@ let deskDecoration = [
   [12,3.4,3.5,3.6,12,12,12],
 ]
 
-// let bilioDecoration = [
-//   [0,1,2,3,0],
-//   [0,4,5,6,0],
-//   [0,7,8,9,0],
-//   [0,10,11,12,0],
-// ]
-
 let bilioDecoration = [
   [1],
 ]
@@ -80,6 +73,10 @@ let menuDisplayed=false;
 let fade;
 let fadeAmount = 1;
 let page = 1;
+
+let song;
+let button;
+let play=false;
 //let opening=true
 
 canvasHeight = PandC.length*world1TileSize;
@@ -92,7 +89,9 @@ function preload(){
   biblio = loadImage("assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio.png");
   inventory = loadImage('assets/Tuiles/Inventaire/1.png');
   menu = loadImage('assets/Tuiles/Menu.png');
+  song = loadSound('assets/The Spooky House of Shady Lane.m4a');
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
+  fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
 }
 // Appelée une fois
 function setup() {
@@ -156,18 +155,6 @@ function setup() {
 
   biblioDecorationTiles = { 
     0: createImage(1,1),
-    // 1:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-h@4x.png'),
-    // 2:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-h@4x.png'),
-    // 3:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-h@4x.png'),
-    // 4:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m_1@4x.png'),
-    // 5:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m@4x.png'),
-    // 6:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m_1@4x.png'),
-    // 7:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-m@4x.png'),
-    // 8:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-m_1@4x.png'),
-    // 9:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-m@4x.png'),
-    // 10:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio g-b@4x.png'),
-    // 11:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio m-b@4x.png'),
-    // 12:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio d-b@4x.png'),
     1:loadImage('assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio.png'),
   }
 
@@ -188,9 +175,7 @@ function setup() {
   hero2 = loadImage('assets/Tuiles/Personnages/Garçon/d.png');
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
-  // worlds = [world1Board,world2Board,worldDecoration]
-  // tileDictionnaries = [world1TileDictionnary,world2TileDictionnary,worldDecorationTiles]
-  // worldsTileSizes = [world1TileSize,world2TileSize,worldDecorationTileSize]
+  
   worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration]
   tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile]
   worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize]
@@ -201,6 +186,14 @@ function setup() {
   biblio.resize(310,0)
 
   fade = 1
+  let save = JSON.parse(localStorage.getItem("save"));
+  if (save!==1) {
+    button = createButton('Play');
+    button.center();
+    button.mousePressed(playSound);
+    button.style('font-family', 'American Typewriter');
+  }
+  
 }
 
 function drawWorld(gameBoard,tileDictionnary,tileSize) {
@@ -415,6 +408,12 @@ let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
  
 };
 
+function playSound(){
+  song.play();
+  button.remove();
+  play=true;
+}
+
 
 // Appelé en continue après le setup
 function draw() {
@@ -422,7 +421,7 @@ function draw() {
   let save = JSON.parse(localStorage.getItem("save"));      // SAVE OPENING
   
   ///////////////////////////////////////////////////// OPENING
-  if (save!==1) {
+  if (save!==1 && play) {
     if (page===1) {
       background(0);
       fill(255, 0, 0, fade)
@@ -468,8 +467,8 @@ function draw() {
       }
       fade += fadeAmount; 
       if (fade === 0 ) {
-        //opening=false
         localStorage.setItem("save", JSON.stringify(1));
+        newCanvas();
       }
     }
   }
@@ -515,6 +514,7 @@ function draw() {
   ////////////////////////////////////////////////////////// TEST CONTACT WITH INTERACTABLE OBJECTS
   if (txt) {
     textSize(22);
+    textFont('Arial');
     fill('white');
     text("M to interact", 370, 200);
     if (keyIsDown(UP_ARROW) && keyIsDown(77)) {
@@ -602,47 +602,56 @@ function draw() {
   }
 }
 
-let s2 = function( sketch ) {
+let newCanvas = () => {
+  console.log("ok");
+  let s2 = function( sketch ) {
 
-  sketch.preload = function(){
-    theKey = loadImage('assets/key.png');
-  }
-
-  sketch.setup = function() {
-   let canvas2 = sketch.createCanvas(160, 693);
-   canvas2.id('inventory');
-   canvas2.position(100,200);
- }
-
- sketch.mouseClicked = function() {
-  if (!menuDisplayed) {
-    if ((mouseX>-380) && (mouseX<-380+120)){
-      if ((mouseY>-50) && (mouseY<-50+50)){
-        menuDisplayed = true;
-      }    
+    sketch.preload = function(){
+      theKey = loadImage('assets/key.png');
     }
-    
-  }else if (menuDisplayed) {
-    if ((mouseX>-380) && (mouseX<-380+120)){
-      if ((mouseY>-50) && (mouseY<-50+50)){
-        menuDisplayed = false;
-      }    
+  
+    sketch.setup = function() {
+      let canvas2 = sketch.createCanvas(160, 693);
+      canvas2.id('inventory');
+      canvas2.position(100,200);
     }
-  }
- };
+  
+    sketch.mouseClicked = function() {
+    if (!menuDisplayed) {
+      if ((mouseX>-380) && (mouseX<-380+120)){
+        if ((mouseY>-50) && (mouseY<-50+50)){
+          menuDisplayed = true;
+        }    
+      }
+      
+    }else if (menuDisplayed) {
+      if ((mouseX>-380) && (mouseX<-380+120)){
+        if ((mouseY>-50) && (mouseY<-50+50)){
+          menuDisplayed = false;
+        }    
+      }
+    }
+    };
+  
+    sketch.draw = function() {
+      //for canvas 2
+      sketch.background(100);
+      sketch.imageMode(CORNER);
+      sketch.image(inventory, 0, 0);
+      if (doorClosed===false) {
+      sketch.image(theKey,  30, 240,100,40);
+      }
+      //sketch.rect(-50,-300,100,50);
+    }
+  };
+  
+  // create the second instance of p5 and pass in the function for sketch 2
+  new p5(s2);
 
- sketch.draw = function() {
-   //for canvas 2
-   sketch.background(100);
-   sketch.imageMode(CORNER);
-   sketch.image(inventory, 0, 0);
-   if (doorClosed===false) {
-    sketch.image(theKey,  30, 240,100,40);
-   }
-    //sketch.rect(-50,-300,100,50);
- }
 };
 
-// create the second instance of p5 and pass in the function for sketch 2
-new p5(s2);
+let save = JSON.parse(localStorage.getItem("save")); 
 
+if (save===1) {
+  newCanvas();
+}

@@ -1,6 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 canvas {
@@ -13,4 +14,17 @@ canvas {
 
 body{
   background-color: black;
+  height: 100%;
+}
+
+button{
+  position: absolute;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  padding-left: 100px;
+  padding-right: 100px;
+  background-color: darkred;
+  color: white;
+  font-size: xx-large;
+  border-style: none;
 }
