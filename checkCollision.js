@@ -3,16 +3,6 @@ function checkCollision(gameBoard,tileSize) {
     const currentLine = gameBoard[y];
     for (let x = 0; x < currentLine.length; x++) {
       const currentTileValue = currentLine[x];
-      // if (currentTileValue===1 || currentTileValue===0) {
-      //   if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-      //     return  true
-      //   } 
-      // }else if (currentTileValue===2) {
-      //   if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-      //     txt=true;
-      //     return  true
-      //   } 
-      // }
       if (currentTileValue===1) {
         if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
           return  true
@@ -27,18 +17,55 @@ function checkCollision(gameBoard,tileSize) {
         } 
       }
 
-      if (currentTileValue===7) {
-        if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-          // if (doorClosed===false) {
-          //   currentWorld=2;
-          //   currentFrontWorld=2;
-          //   return  true
-          // }
-          // //txt = true;
-          // return  true
-          txt = true;
-          tile=currentTileValue;
-        } 
+      let keyFound = JSON.parse(localStorage.getItem("keyFound"));
+      if (keyFound) {
+        if (currentTileValue===7) {
+          if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            // txt = true;
+            // tile=currentTileValue;
+            localStorage.setItem("save", JSON.stringify(2));
+            localStorage.setItem("frontSave", JSON.stringify(8));
+            localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
+            
+            currentWorld=2;
+            currentFrontWorld=8;
+            collision=world2Collision;
+          } 
+        }
+      }
+
+      //let save = JSON.parse(localStorage.getItem("save"));
+      if (currentFrontWorld===8) {
+        if (currentTileValue===8) {
+          if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            // txt = true;
+            // tile=currentTileValue;
+            localStorage.setItem("save", JSON.stringify(2));
+            localStorage.setItem("frontSave", JSON.stringify(9));
+            localStorage.setItem("collisionSave", JSON.stringify(world3Collision));
+
+            currentWorld=2;
+            currentFrontWorld=9;
+            collision=world3Collision;
+          } 
+        }
+      }
+
+      if (currentFrontWorld===9) {
+        if (currentTileValue===9) {
+          if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            // txt = true;
+            // tile=currentTileValue;
+            //localStorage.setItem("save", JSON.stringify(2));
+            localStorage.setItem("save", JSON.stringify(1));
+            localStorage.setItem("frontSave", JSON.stringify(10));
+            localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
+
+            currentWorld=0;
+            currentFrontWorld=10;
+            collision=world4Collision;
+          } 
+        }
       }
     }
   }

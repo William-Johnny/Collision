@@ -61,7 +61,7 @@ let heroX = 3*world1TileSize;
 let heroY = 5*world1TileSize;
 let txt = false;
 let tile = 0;
-let irotate = 0;
+let collision = world1Collision;
 
 let side = 80;
 let y1 = 410;
@@ -74,7 +74,7 @@ let bool = true;
 let bookDisplayed = false;
 let bookOpened = false;
 let zoneAvailable = true;
-let doorClosed=true;
+let keyFound=false;
 let menuDisplayed=false;
 
 let fade;
@@ -87,6 +87,8 @@ let play=false;
 //let opening=true
 
 let slider;
+let bg;
+let bg2;
 
 canvasHeight = PandC.length*world1TileSize;
 canvasWidth = PandC[0].length*world1TileSize
@@ -101,6 +103,8 @@ function preload(){
   song = loadSound('assets/The Spooky House of Shady Lane.m4a');
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
+  bg = loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Pièce.png');
+  bg2 = loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/Cuisine.png');
 }
 // Appelée une fois
 function setup() {
@@ -109,13 +113,13 @@ function setup() {
 
   worldtestTileDictionnary = { 
     0: createImage(1,1),
-    12:loadImage('assets/Tuiles/Sol/Chambre/Sol2.png'),
+    12:loadImage('assets/Tuiles/Sol/SOL@4x.png'),
   };
   worldDecorationTiles = { 
-    0: loadImage('assets/bord.jpg'),
+    0: createImage(1,1),
     12:createImage(1,1),
-    13:loadImage('assets/leaves.png'),
-    2:loadImage('assets/trunk.png'),
+    13:createImage(1,1),
+    2:createImage(1,1),
     3.1:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Vue de haut/gauche.png'),
     3.2:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Vue de haut/milieu.png'),
     3.3:loadImage('assets/Tuiles/Meuble/Chambre/Bureau/Vue de haut/droit.png'),
@@ -185,28 +189,114 @@ function setup() {
   PandCTiles = {
     12:loadImage('assets/Tuiles/Mur/Chambre/mur base@4x.png'),
   }
+
+  bathroomDecorationTiles = { 
+    0: createImage(1,1),
+    12: createImage(1,1),
+    1:loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/toilette.png'),
+    5:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/baignoire d.png'),
+    6:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/baignoire g.png'),
+    8:loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-22.png'),
+    // 3:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m-g@4x.png'),
+    // 4:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m-g@4x.png'),
+    // 5:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m@4x.png'),
+    // 6:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m@4x.png'),
+    // 7:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m-d@4x.png'),
+    // 8:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m-d@4x.png'),
+  }
+
+  livingRoomDecorationTiles = { 
+    0: createImage(1,1),
+    12: createImage(1,1),
+    1:loadImage('assets/Tuiles/Meuble/Salon/Piano/Vue\ de\ haut/piano\ @4x.png'),
+    // 2:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas g@4x.png'),
+    3:loadImage('assets/Tuiles/Meuble/Salon/Canapé/Vue\ de\ haut/canapé\ g@4x.png'),
+    4:loadImage('assets/Tuiles/Meuble/Salon/Canapé/Vue\ de\ haut/Canapé\ d@4x.png'),
+    
+    5:loadImage('assets/Tuiles/Meuble/Salon/Porte coffre/Vue\ de\ haut/porte h-d@4x.png'),
+    6:loadImage('assets/Tuiles/Meuble/Salon/Porte coffre/Vue\ de\ haut/porte h-g@4x.png'),
+    7:loadImage('assets/Tuiles/Meuble/Salon/Porte coffre/Vue\ de\ haut/porte b-d@4x.png'),
+    8:loadImage('assets/Tuiles/Meuble/Salon/Porte coffre/Vue\ de\ haut/porte b-g@4x.png'),
+
+    9:loadImage('assets/Tuiles/Meuble/Salon/Tapis/Vue\ de\ haut/tapis h-d@4x.png'),
+
+  }
+
+  let kitchenDecorationTiles = {
+    0: createImage(1,1),
+    12: createImage(1,1),
+    "1-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-1.png"),
+    "1-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-2.png"),
+    "1-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-3.png"),
+    "1-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-4.png"),
+    "1-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-5.png"),
+    "1-6": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-6.png"),
+    "1-8": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-8.png"),
+    "1-9": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-9.png"),
+    "2-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-2.png"),
+    "2-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-3.png"),
+    "2-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-4.png"),
+    "2-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-5.png"),
+    "2-6": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-6.png"),
+    "3-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/3-1.png"),
+    "3-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/3-2.png"),
+    "3-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/3-3.png"),
+    "4-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/4-1.png"),
+    "4-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/4-2.png"),
+    "4-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/4-3.png"),
+    "4-11": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/4-11.png"),
+    "5-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/5-1.png"),
+    "5-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/5-2.png"),
+    "5-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/5-3.png"),
+    "5-11": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/5-11.png"),
+    "6-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/6-1.png"),
+    "6-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/6-2.png"),
+    "6-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/6-3.png"),
+    "7-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/7-1.png"),
+    "7-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/7-2.png"),
+    "7-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/7-3.png"),
+    "7-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/7-4.png"),
+    "7-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/7-5.png"),
+    "7-6": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/7-6.png"),
+    "8-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-1.png"),
+    "8-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-2.png"),
+    "8-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-3.png"),
+    "8-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-4.png"),
+    "8-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-5.png")
+};
+
+
+
   hero0 = loadImage('assets/Tuiles/Personnages/Garçon/Vue dessus.png');
   hero1 = loadImage('assets/Tuiles/Personnages/Garçon/g.png');
   hero2 = loadImage('assets/Tuiles/Personnages/Garçon/d.png');
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
   
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration]
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile]
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize]
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,world4Decoration]
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles, livingRoomDecorationTiles]
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,world1TileSize]
 
   img2.resize(200,0);
   img3.resize(400,0);
-  img4.resize(150,0)
-  biblio.resize(310,0)
+  img4.resize(150,0);
+  biblio.resize(310,0);
 
   fade = 1
   let save = JSON.parse(localStorage.getItem("save"));
-  if (save!==1) {
+  let frontSave = JSON.parse(localStorage.getItem("frontSave"));
+  let collisionSave = JSON.parse(localStorage.getItem("collisionSave"));
+  if (save<1) {
     button = createButton('Play');
     button.center();
     button.mousePressed(playSound);
     button.style('font-family', 'American Typewriter');
+  }else if (save===1) {
+    currentWorld=0;
+  }else{
+    currentWorld=save;
+    currentFrontWorld=frontSave;
+    collision=collisionSave;
   }
   
 }
@@ -237,21 +327,19 @@ function drawFront(gameBoard,tileDictionnary,tileSize) {
 
 /////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
-  if (currentFrontWorld===1) {
+  if (currentFrontWorld===1 || currentFrontWorld>=8) {
     if (keyIsDown(LEFT_ARROW)) {
       currentHeroImage=hero1;
-      //irotate -= 5;
       heroX -= 5;
-      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+      if (checkCollision(collision,world1CollisionTileSize)) {
         heroX += 5;
       } 
-      //console.log(irotate);
     }
   
     if (keyIsDown(RIGHT_ARROW)) {
       currentHeroImage=hero2;
       heroX += 5;
-      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+      if (checkCollision(collision,world1CollisionTileSize)) {
         heroX -= 5;
       } 
     }
@@ -259,7 +347,7 @@ const checkKeys = (currentMap)=>{
     if (keyIsDown(UP_ARROW)) {
       currentHeroImage=hero0;
       heroY -= 5;
-      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+      if (checkCollision(collision,world1CollisionTileSize)) {
         heroY += 5;
       } 
     }
@@ -267,7 +355,7 @@ const checkKeys = (currentMap)=>{
     if (keyIsDown(DOWN_ARROW)) {
       currentHeroImage=hero3;
       heroY += 5;
-      if (checkCollision(world1Collision,world1CollisionTileSize)) {
+      if (checkCollision(collision,world1CollisionTileSize)) {
         heroY -= 5;
       } 
     }
@@ -309,11 +397,22 @@ function adjustBrightness(adjustment) {
 
 // Appelé en continue après le setup
 function draw() {
+  //console.log(currentFrontWorld); 
+  if (currentFrontWorld===8) {
+    background(bg);
+  }
+  if (currentFrontWorld===9) {
+    let canvasHeight2=world3Board.length*world1TileSize;
+    let canvasWidth2 = world3Board[0].length*world1TileSize
+    let canvas2 = createCanvas(canvasWidth2,canvasHeight2);
+    canvas2.center();
+    background(bg2);
+  }
   checkKeys(currentWorld);
   let save = JSON.parse(localStorage.getItem("save"));      // SAVE OPENING
   
   ///////////////////////////////////////////////////// OPENING
-  if (save!==1 && play) {
+  if (save<1 && play) {
     if (page===1) {
       background(0);
       fill(255, 0, 0, fade)
@@ -360,14 +459,14 @@ function draw() {
       fade += fadeAmount; 
       if (fade === 0 ) {
         localStorage.setItem("save", JSON.stringify(1));
-        newCanvas();
+        inventoryCanvas();
       }
     }
   }
   ////////////////////////////////////////////////////////// 
 
   ////////////////////////////////////////////////////////// DRAW WORLDS
-  if (bool && save===1 && currentFrontWorld===5) {
+  if (bool && save>=1 && currentFrontWorld===5) {
     imageMode(CORNER);
     drawWorld(worlds[currentWorld],
       tileDictionnaries[currentWorld],
@@ -375,24 +474,18 @@ function draw() {
     image(biblio, 180, 0);
     
   }else{
-    if (bool && save===1) {
+    if (bool && save>=1) {
       imageMode(CORNER);
       if (currentWorld===0) {
         background(0); 
       }
-      drawWorld(worlds[currentWorld],
+      if (currentFrontWorld!==8 && currentFrontWorld!==9) {
+        drawWorld(worlds[currentWorld],
                 tileDictionnaries[currentWorld],
                 worldsTileSizes[currentWorld]);
-      if (currentWorld!=2 && currentFrontWorld!=3) {
-        // imageMode(CENTER);
-        // angleMode(DEGREES); 
-        // push()
-        // translate(heroY, heroX);
-        // rotate(irotate);
-        // image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
-        // pop()
-        image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
       }
+      
+      image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
       drawFront(worlds[currentFrontWorld],
         tileDictionnaries[currentFrontWorld],
       worldsTileSizes[currentFrontWorld]);
@@ -431,7 +524,7 @@ function draw() {
   }
   //////////////////////////////////////////////////////////
 
-  if (currentFrontWorld>2) {
+  if (currentFrontWorld>2 && currentFrontWorld < 8) {
     fill('white');
     text("P to exit", 300, 565);
   }
@@ -477,7 +570,8 @@ function draw() {
           //imageMode(CORNER);
           // image(bluredImg, 0, 0);
           // bluredImg.resize(1440, 900);
-          doorClosed=false;
+          keyFound=true;
+          localStorage.setItem("keyFound", JSON.stringify(keyFound));
           imageMode(CENTER);
           image(img3, canvasWidth/2, canvasHeight/2);
           zoneAvailable = false;
@@ -502,6 +596,7 @@ let menuCanvas = () => {
       sketch.setup=function() {
         bg = loadImage('assets/Tuiles/Menu.png');
         createCanvas(canvasWidth, canvasHeight);
+       
         slider1 = createSlider(0, 255);
         slider1.position(canvasWidth+100, canvasHeight-100);
         slider1.size(80);
@@ -555,7 +650,7 @@ let inventoryCanvas = () => {
   
     sketch.mouseClicked = function() {
     if (!menuDisplayed) {
-      if ((mouseX>-380) && (mouseX<-380+120)){
+      if ((mouseX>-360) && (mouseX<-360+120)){
         if ((mouseY>-50) && (mouseY<-50+50)){
           menuDisplayed = true;
           menuCanvas();
@@ -564,7 +659,7 @@ let inventoryCanvas = () => {
       }
       
     }else if (menuDisplayed) {
-      if ((mouseX>-380) && (mouseX<-380+120)){
+      if ((mouseX>-360) && (mouseX<-360+120)){
         if ((mouseY>-50) && (mouseY<-50+50)){
           menuDisplayed = false;
           menuCanvas();
@@ -579,8 +674,9 @@ let inventoryCanvas = () => {
       sketch.background(100);
       sketch.imageMode(CORNER);
       sketch.image(inventory, 0, 0);
-      if (doorClosed===false) {
-      sketch.image(theKey,  30, 240,100,40);
+      let keyFound = JSON.parse(localStorage.getItem("keyFound"));
+      if (keyFound) {
+        sketch.image(theKey,  30, 240,100,40);
       }
       //sketch.rect(-50,-300,100,50);
     }
@@ -592,6 +688,6 @@ let inventoryCanvas = () => {
 
 let save = JSON.parse(localStorage.getItem("save")); 
 
-if (save===1) {
+if (save>=1) {
   inventoryCanvas();
 }
