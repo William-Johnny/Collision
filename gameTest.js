@@ -193,16 +193,27 @@ function setup() {
   bathroomDecorationTiles = { 
     0: createImage(1,1),
     12: createImage(1,1),
-    1:loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/toilette.png'),
-    5:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/baignoire d.png'),
-    6:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/baignoire g.png'),
-    8:loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-22.png'),
-    // 3:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m-g@4x.png'),
-    // 4:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m-g@4x.png'),
-    // 5:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m@4x.png'),
-    // 6:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m@4x.png'),
-    // 7:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit haut m-d@4x.png'),
-    // 8:loadImage('assets/Tuiles/Meuble/Chambre/Lit/Point & click/lit bas m-d@4x.png'),
+    1:loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/Toilettes.png'),
+
+    5:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 2.png'),
+    6:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 1.png'),
+    7:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 3.png'),
+    8:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 4.png'),
+    9:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 5.png'),
+    10:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 6.png'),
+    11:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 7.png'),
+    13:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 8.png'),
+
+    3:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Lavabo G.png'),
+    4:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Lavabo D.png'),
+
+    14:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/ps.png'),
+
+    15:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Porte G.png'),
+    16:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Porte D.png'),
+    
+    17:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Aeration.png'),
+    
   }
 
   livingRoomDecorationTiles = { 
@@ -484,8 +495,12 @@ function draw() {
                 tileDictionnaries[currentWorld],
                 worldsTileSizes[currentWorld]);
       }
-      
+      if (currentFrontWorld===8) {
+        heroX=7*world1TileSize;
+        heroY=7*world1TileSize;
+      }
       image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+     
       drawFront(worlds[currentFrontWorld],
         tileDictionnaries[currentFrontWorld],
       worldsTileSizes[currentFrontWorld]);
