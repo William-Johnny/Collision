@@ -16,10 +16,10 @@ let furnitureDecoration = [
 
 let doorDecoration = [
   [12,12,12,12],
-  [12,12,1,1,12],
-  [12,12,1,1,12],
-  [12,12,3,1,12],
-  [12,12,1,1,12],
+  [12,12,1,2,12],
+  [12,12,3,4,12],
+  [12,12,5,6,12],
+  [12,12,7,8,12],
 ]
 
 let PandC = [
@@ -84,11 +84,29 @@ let page = 1;
 let song;
 let button;
 let play=false;
-//let opening=true
 
 let slider;
 let bg;
 let bg2;
+
+canMove=0;
+canMove2=0;
+canMove3=0;
+
+let w = 45;
+let h = 30;
+
+let res = "";
+
+var dragging = false; // Is the object being dragged?
+var rollover = false; // Is the mouse over the ellipse?
+
+// Location and size of key img when in use
+let x = 100;
+let y = 100;
+let keyWidth = 100;
+let keyHeight = 100; 
+let offsetX, offsetY; // Mouseclick offset
 
 canvasHeight = PandC.length*world1TileSize;
 canvasWidth = PandC[0].length*world1TileSize
@@ -105,8 +123,10 @@ function preload(){
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
   bg = loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Pièce.png');
   bg2 = loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/Cuisine.png');
+  digicode = loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/Digicode.png ');
+  letter = loadImage('assets/Lettre.png ');
 }
-// Appelée une fois
+
 function setup() {
   let canvas = createCanvas(canvasWidth,canvasHeight);
   canvas.center();
@@ -132,7 +152,7 @@ function setup() {
     "4.3":loadImage('assets/Tuiles/Meuble/Chambre/biblio/Vue de haut/biblio haut 2@4x.png'),
 
     "porte":loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-21.png'),
-    "porte2":loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-22.png'),
+    11:loadImage('assets/Tuiles/Porte/Chambre/Vue de haut/vue de haut-22.png'),
     
     "5.1":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut g_1@4x.png'),
     "5.2":loadImage('assets/Tuiles/Meuble/Chambre/Lit/Vue de haut/vue haut g@4x.png'),
@@ -274,8 +294,32 @@ function setup() {
     "8-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-3.png"),
     "8-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-4.png"),
     "8-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-5.png")
-};
+  };
 
+  let doorLetterDecorationTiles = {
+    0: createImage(1,1),
+    12:createImage(1,1),
+  };
+
+  let baseFilePath = "assets/Tuiles/Meuble/Chambre/Porte/";
+
+  for (let i = 1; i <= 8; i++) {
+    let key = `${i}`;
+    let filePath = loadImage(`${baseFilePath}${i}.png`);
+    doorLetterDecorationTiles[key] = filePath;
+  }
+
+  doorDecorationTile = { 
+    12: createImage(1,1),
+    1:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    2:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    3:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    4:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    5:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte poignée.png'),
+    6:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    7:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+    8:loadImage('assets/Tuiles/Porte/Chambre/Point and click/porte.png'),
+  }
 
 
   hero0 = loadImage('assets/Tuiles/Personnages/Garçon/Vue dessus.png');
@@ -284,9 +328,11 @@ function setup() {
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
   
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,world4Decoration]
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles, livingRoomDecorationTiles]
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,world1TileSize]
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,world4Decoration,doorDecoration]
+  
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles, livingRoomDecorationTiles,doorLetterDecorationTiles]
+  
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,world1TileSize,115]
 
   img2.resize(200,0);
   img3.resize(400,0);
@@ -338,7 +384,7 @@ function drawFront(gameBoard,tileDictionnary,tileSize) {
 
 /////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
-  if (currentFrontWorld===1 || currentFrontWorld>=8) {
+  if (currentFrontWorld===1 || currentFrontWorld>=8 && currentFrontWorld!=11) {
     if (keyIsDown(LEFT_ARROW)) {
       currentHeroImage=hero1;
       heroX -= 5;
@@ -372,9 +418,18 @@ const checkKeys = (currentMap)=>{
     }
   }else{
     if (keyIsDown(80)) {
+      localStorage.setItem("keyImgClicked", JSON.stringify(false));
       currentWorld=0;
       bool=true;
       currentFrontWorld=1;  //retour au monde de décoration de base
+    }
+  }
+
+  if (currentFrontWorld===12) {
+    if (keyIsDown(80)) {
+      currentWorld=2;
+      currentFrontWorld=9;
+      collision=world3Collision;
     }
   }
 }
@@ -406,11 +461,98 @@ function adjustBrightness(adjustment) {
   updatePixels();
 }
 
+function mouseClicked() {
+  
+  if (currentFrontWorld===12) {
+    if(pointIsInObjective((0*w+0*20)+255, (0*h+0*15)+205, mouseX,mouseY, w, h)){
+      res+="1";
+      console.log("ok")
+    }
+
+    if(pointIsInObjective((1*w+1*20)+255,(0*h+0*15)+205, mouseX,mouseY,w, h)){
+      res+="2";
+    }
+
+    if(pointIsInObjective((2*w+2*20)+255, (0*h+0*15)+205, mouseX,mouseY, w, h)){
+      res+="3";
+    }
+
+    if(pointIsInObjective((0*w+0*20)+255,(1*h+1*15)+205, mouseX,mouseY,w, h)){
+      res+="4";
+    }
+    
+    if(pointIsInObjective((1*w+1*20)+255, (1*h+1*15)+205, mouseX,mouseY, w, h)){
+      res+="5";
+    }
+
+    if(pointIsInObjective((2*w+2*20)+255,(1*h+1*15)+205, mouseX,mouseY,w, h)){
+      res+="6";
+    }
+
+    if(pointIsInObjective((0*w+0*20)+255,(2*h+2*15)+205, mouseX,mouseY,w, h)){
+      res+="7";
+    }
+    
+    if(pointIsInObjective((1*w+1*20)+255, (2*h+2*15)+205, mouseX,mouseY, w, h)){
+      res+="8";
+    }
+
+    if(pointIsInObjective((2*w+2*20)+255,(2*h+2*15)+205, mouseX,mouseY,w, h)){
+      res+="9";
+    }
+
+    if(pointIsInObjective((0*w+0*20)+255,(3*h+3*15)+205, mouseX,mouseY,w, h)){
+      res+="*";
+    }
+    
+    if(pointIsInObjective((1*w+1*20)+255,(3*h+3*15)+205,  mouseX,mouseY, w, h)){
+      res+="0";
+    }
+
+    if(pointIsInObjective((2*w+2*20)+255,(3*h+3*15)+205, mouseX,mouseY,w, h)){
+      res+="#";
+    }
+  }
+}
+
+function addLetterSpacing(input, amount, spacer) {
+  spacerCharacter = '\u200A' || spacer;
+  let characters = input.split('');
+  spacerCharacter = spacerCharacter.repeat(amount);
+  return characters.join(spacerCharacter);
+}
+
+
 // Appelé en continue après le setup
 function draw() {
+  checkCollision(collision,world1CollisionTileSize)
+
+  if (currentFrontWorld===8) {
+    canMove++;
+    if (canMove<=1) {
+      heroX=7*world1TileSize;
+      heroY=7*world1TileSize;
+    }
+  }else if (currentFrontWorld===9) {
+    canMove2++;
+    if (canMove2<=1) {
+      heroX=5*world1TileSize;
+      heroY=4*world1TileSize;
+    }
+  }else if (currentFrontWorld===10) {
+    canMove3++;
+    if (canMove3<=1) {
+      heroX=4*world1TileSize;
+      heroY=2*world1TileSize;
+    }
+  }
+  
   //console.log(currentFrontWorld); 
   if (currentFrontWorld===8) {
     background(bg);
+  }
+  if (currentFrontWorld===12) {
+    background(digicode);
   }
   if (currentFrontWorld===9) {
     let canvasHeight2=world3Board.length*world1TileSize;
@@ -419,7 +561,6 @@ function draw() {
     canvas2.center();
     background(bg2);
   }
-  checkKeys(currentWorld);
   let save = JSON.parse(localStorage.getItem("save"));      // SAVE OPENING
   
   ///////////////////////////////////////////////////// OPENING
@@ -490,20 +631,22 @@ function draw() {
       if (currentWorld===0) {
         background(0); 
       }
-      if (currentFrontWorld!==8 && currentFrontWorld!==9) {
+      if (currentFrontWorld!==8 && currentFrontWorld!==9 && currentFrontWorld!==12) {
         drawWorld(worlds[currentWorld],
                 tileDictionnaries[currentWorld],
                 worldsTileSizes[currentWorld]);
       }
-      if (currentFrontWorld===8) {
-        heroX=7*world1TileSize;
-        heroY=7*world1TileSize;
+      
+      if (currentFrontWorld<3 || currentFrontWorld===8 || currentFrontWorld===9 || currentFrontWorld===10) {
+        image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
       }
-      image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
-     
-      drawFront(worlds[currentFrontWorld],
+
+      if (currentFrontWorld!==12) {
+        drawFront(worlds[currentFrontWorld],
         tileDictionnaries[currentFrontWorld],
-      worldsTileSizes[currentFrontWorld]);
+        worldsTileSizes[currentFrontWorld]);
+      }
+      
     }
   }
   
@@ -512,36 +655,41 @@ function draw() {
   
   
   ////////////////////////////////////////////////////////// TEST CONTACT WITH INTERACTABLE OBJECTS
-  if (txt) {
+  if (txt && currentFrontWorld===1 || txt && currentFrontWorld===8 || txt && currentFrontWorld===9) {
     textSize(22);
     textFont('Arial');
     fill('white');
     text("M to interact", 370, 200);
-    if (keyIsDown(UP_ARROW) && keyIsDown(77)) {
+    if (keyIsDown(77)) {
       currentWorld=2;
       currentFrontWorld=tile;
     }
-    if (keyIsDown(LEFT_ARROW)&& keyIsDown(77)) {
-      currentWorld=2;
-      currentFrontWorld=tile;
-    }
-  
-    if (keyIsDown(RIGHT_ARROW)&& keyIsDown(77)) {
+    if (keyIsDown(77)) {
       currentWorld=2;
       currentFrontWorld=tile;
     }
   
-    if (keyIsDown(DOWN_ARROW)&& keyIsDown(77)) {
+    if (keyIsDown(77)) {
+      currentWorld=2;
+      currentFrontWorld=tile;
+    }
+  
+    if (keyIsDown(77)) {
       currentWorld=2;
       currentFrontWorld=tile;
     }
     txt = false;
   }
   //////////////////////////////////////////////////////////
-
-  if (currentFrontWorld>2 && currentFrontWorld < 8) {
+  //console.log(currentFrontWorld);
+  if (currentFrontWorld>2 && currentFrontWorld < 8 || currentFrontWorld===11) {
     fill('white');
     text("P to exit", 300, 565);
+  }
+
+  if (currentFrontWorld===12) {
+    fill('white');
+    text("P to exit", 300, 500);
   }
 
   //////////////////////////////////////////////////////////   POINT AND CLICK
@@ -593,10 +741,80 @@ function draw() {
         }
       }
     }
+  }else if (currentFrontWorld===11){
+    if (mouseIsPressed === true) {
+      if (pointIsInObjective(335,200, mouseX,mouseY, 100,150)) {
+        bool=false;
+        //imageMode(CORNER);
+        // image(bluredImg, 0, 0);
+        // bluredImg.resize(1440, 900);
+        imageMode(CENTER);
+        image(letter, canvasWidth/2, canvasHeight/2,550,576);
+        //zoneAvailable = false;
+      }
+    }
+  }
+
+  let keyClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
+  if (currentFrontWorld===7 && keyClicked) {
+    image(theKey,x, y,100,50)
+    // Is mouse over object
+    if (mouseX > x && mouseX < x + keyWidth && mouseY > y && mouseY < y + keyHeight) {
+      rollover = true;
+    } else {
+      rollover = false;
+    }
+
+    // Adjust location if being dragged
+    if (dragging) {
+      x = mouseX + offsetX;
+      y = mouseY + offsetY;
+    }
+
+    if (mouseIsPressed===true) {
+      if (mouseX > x && mouseX < x + keyWidth && mouseY > y && mouseY < y + keyHeight) {
+        dragging = true;
+        offsetX = x - mouseX;
+        offsetY = y - mouseY;
+      }
+    }else{
+      // Quit dragging
+      dragging = false;
+
+      if ((x>0) && (x<0+100)){
+        if ((y>0) && (y<0+100)){
+          localStorage.setItem("save", JSON.stringify(2));
+          localStorage.setItem("frontSave", JSON.stringify(8));
+          localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
+          
+          currentWorld=2;
+          currentFrontWorld=8;
+          collision=world2Collision;
+        }    
+      }
+    }
+    
+    fill(0);
+    rect(0,0,100,100)
   }
 
   let brightness = JSON.parse(localStorage.getItem("brightness"));
   adjustBrightness(brightness);
+
+  if (res==="1256") {
+    localStorage.setItem("passwordFound", JSON.stringify(true));
+    fill('green');
+  }else if (res.length>4) {
+    res="";
+    fill('red');
+  }
+  let digicodeNumbers = addLetterSpacing(res, 15, '\u2007');
+  //rect(335,200,100,150);
+  if (currentFrontWorld===12) {
+    text(digicodeNumbers, 270, 175);
+  }
+  
+  checkKeys(currentWorld);
 }
 
 let menuCanvas = () => {
@@ -683,17 +901,37 @@ let inventoryCanvas = () => {
       }
     }
     };
-  
+
+    let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
+      if ((x>Nb1) && (x<Nb1+w)){
+         if ((y>Nb2) && (y<Nb2+h)){
+             return true;
+         }    
+       }
+        return false;
+     
+    };
+    
+    localStorage.setItem("keyImgClicked", JSON.stringify(false));
     sketch.draw = function() {
-      //for canvas 2
       sketch.background(100);
       sketch.imageMode(CORNER);
       sketch.image(inventory, 0, 0);
+
+      if (sketch.mouseIsPressed===true && currentFrontWorld===7) {
+        //console.log(sketch.mouseX,sketch.mouseY);
+        if (pointIsInObjective(30, 240,sketch.mouseX,sketch.mouseY,100,40)) {
+          localStorage.setItem("keyImgClicked", JSON.stringify(true));
+        }
+        
+      }
+      //console.log(keyImgClicked);
       let keyFound = JSON.parse(localStorage.getItem("keyFound"));
-      if (keyFound) {
+      let keyImgClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
+      if (keyFound && keyImgClicked===false) {
         sketch.image(theKey,  30, 240,100,40);
       }
-      //sketch.rect(-50,-300,100,50);
+      //sketch.rect(30, 240,100,40);
     }
   };
   

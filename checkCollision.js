@@ -9,28 +9,14 @@ function checkCollision(gameBoard,tileSize) {
         } 
       }
       
-      if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6) {
-        if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-          txt = true;
-          tile=currentTileValue;
-          return  true
-        } 
-      }
-
-      let keyFound = JSON.parse(localStorage.getItem("keyFound"));
-      if (keyFound) {
-        if (currentTileValue===7) {
+      if (currentFrontWorld===1) {
+        if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6 || currentTileValue===7 || currentTileValue===11 || currentTileValue===8) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-            // txt = true;
-            // tile=currentTileValue;
-            localStorage.setItem("save", JSON.stringify(2));
-            localStorage.setItem("frontSave", JSON.stringify(8));
-            localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
-            
-            currentWorld=2;
-            currentFrontWorld=8;
-            collision=world2Collision;
-          } 
+            return  true
+          }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            txt = true;
+            tile=currentTileValue;
+          }
         }
       }
 
@@ -51,19 +37,23 @@ function checkCollision(gameBoard,tileSize) {
         }
       }
 
+      let passFound = JSON.parse(localStorage.getItem("passwordFound"));
       if (currentFrontWorld===9) {
-        if (currentTileValue===9) {
+        if (currentTileValue===12) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-            // txt = true;
-            // tile=currentTileValue;
-            //localStorage.setItem("save", JSON.stringify(2));
-            localStorage.setItem("save", JSON.stringify(1));
-            localStorage.setItem("frontSave", JSON.stringify(10));
-            localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
+            txt = true;
+            tile=currentTileValue;
 
-            currentWorld=0;
-            currentFrontWorld=10;
-            collision=world4Collision;
+            if (passFound===true) {
+              localStorage.setItem("save", JSON.stringify(1));
+              localStorage.setItem("frontSave", JSON.stringify(10));
+              localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
+
+              currentWorld=0;
+              currentFrontWorld=10;
+              collision=world4Collision;
+            }
+            
           } 
         }
       }
@@ -86,16 +76,16 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
   // Arrivée par la gauche
   if (xP + wP > xR){
     if (pointIsInRect(xP+wP, yP + hP/2,xR,yR,wR,hR)) {
-      print("Par la gauche et le centre");
+      //print("Par la gauche et le centre");
       return true;
     }
     if (pointIsInRect(xP+wP, yP,xR,yR,wR,hR)){
-      print("Par la gauche et le bas");
+      //print("Par la gauche et le bas");
       return true;
     }
     
     if (pointIsInRect(xP+wP, yP + hP,xR,yR,wR,hR)){
-      print("Par la gauche et le haut");
+      //print("Par la gauche et le haut");
       return true;
     }
     
@@ -105,16 +95,16 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
   // Arrivée par la droite
   if (xP < xR + wR){
     if (pointIsInRect(xP, yP + hP/2,xR,yR,wR,hR)){
-      print("Par la droite et le centre");
+      //print("Par la droite et le centre");
       return true;
     }
     
     if (pointIsInRect(xP, yP + hP,xR,yR,wR,hR)){
-      print("Par la droite et le haut");
+      //print("Par la droite et le haut");
       return true;
     }
     if (pointIsInRect(xP, yP,xR,yR,wR,hR)){
-      print("Par la droite et le bas");
+      //print("Par la droite et le bas");
       return true;
     }
     
@@ -124,16 +114,16 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
    if (yP < yR + hR){
 
     if (pointIsInRect(xP + wP/2, yP+hP/2, xR,yR,wR,hR)){
-      print("Par la bas et le centre : Effet tête du personnage qui passe sur la maison");
+      //print("Par la bas et le centre : Effet tête du personnage qui passe sur la maison");
       return true;
     }
 
     if (pointIsInRect(xP + wP/2, yP+hP/2, xR,yR,wR,hR)){
-      print("Par la bas et la gauche");
+      //print("Par la bas et la gauche");
       return true;
     }
     if (pointIsInRect(xP + wP/2, yP+hP/2, xR,yR,wR,hR)){
-      print("Par le bas et la droite");
+      //print("Par le bas et la droite");
       return true;
     }
    }
@@ -141,18 +131,20 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
    // Arrivée par le haut
    if (yP + hP > yR){
     if (pointIsInRect(xP + wP / 2, yP+hP,xR,yR,wR,hR)){
-      print("Par le haut et le centre");
+      //print("Par le haut et le centre");
       return true;
     }
     
     if (pointIsInRect(xP, yP+hP, xR,yR,wR,hR)){
-      print("Par le haut et la gauche");
+      //print("Par le haut et la gauche");
       return true;
     }
     if (pointIsInRect(xP + wP, yP+hP,xR,yR,wR,hR)){
-      print("Par le bas et la droite");
+      //print("Par le bas et la droite");
       return true;
     }
    }
 
 };
+
+//,xImaginaryPoint,yImaginaryPoint
