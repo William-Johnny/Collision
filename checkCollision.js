@@ -10,7 +10,7 @@ function checkCollision(gameBoard,tileSize) {
       }
       
       if (currentFrontWorld===1) {
-        if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6 || currentTileValue===7 || currentTileValue===11 || currentTileValue===8) {
+        if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6 || currentTileValue===7 || currentTileValue===10 || currentTileValue===8) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
             return  true
           }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
@@ -22,18 +22,37 @@ function checkCollision(gameBoard,tileSize) {
 
       //let save = JSON.parse(localStorage.getItem("save"));
       if (currentFrontWorld===8) {
-        if (currentTileValue===8) {
+        if (currentTileValue===13) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-            // txt = true;
-            // tile=currentTileValue;
-            localStorage.setItem("save", JSON.stringify(2));
-            localStorage.setItem("frontSave", JSON.stringify(9));
-            localStorage.setItem("collisionSave", JSON.stringify(world3Collision));
-
-            currentWorld=2;
-            currentFrontWorld=9;
-            collision=world3Collision;
+            txt = true;
+            tile=currentTileValue;
           } 
+        }
+        if (currentTileValue===14) {
+          if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            return  true
+          }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            txt = true;
+            tile=currentTileValue;
+          } 
+        }
+        if (currentTileValue===8) {
+          let pinFound = JSON.parse(localStorage.getItem("pinFound"));
+          if (pinFound) {
+            if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+              // txt = true;
+              // tile=currentTileValue;
+              localStorage.setItem("save", JSON.stringify(2));
+              localStorage.setItem("frontSave", JSON.stringify(9));
+              localStorage.setItem("collisionSave", JSON.stringify(world3Collision));
+  
+              currentWorld=2;
+              currentFrontWorld=9;
+              collision=world3Collision;
+              localStorage.setItem("pinFound", JSON.stringify(false));
+            }
+          }
+           
         }
       }
 
@@ -45,15 +64,35 @@ function checkCollision(gameBoard,tileSize) {
             tile=currentTileValue;
 
             if (passFound===true) {
-              localStorage.setItem("save", JSON.stringify(1));
-              localStorage.setItem("frontSave", JSON.stringify(10));
+              // localStorage.setItem("save", JSON.stringify(1));
+              localStorage.setItem("frontSave", JSON.stringify(20));
               localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
 
-              currentWorld=0;
-              currentFrontWorld=10;
+              // currentWorld=12;
+              // currentFrontWorld=10;
+              currentFrontWorld=20;
               collision=world4Collision;
             }
             
+          } 
+        }
+        // else if (currentTileValue===25 || currentTileValue===26 || currentTileValue===27 ) {
+        //   if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+        //     return  true
+        //   }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+        //     txt = true;
+        //     tile=currentTileValue;
+        //   } 
+        // }
+      }
+
+      if (currentFrontWorld===20) {
+        if (currentTileValue===15) {
+          if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            return  true
+          }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            txt = true;
+            tile=currentTileValue;
           } 
         }
       }

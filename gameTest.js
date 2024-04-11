@@ -38,7 +38,18 @@ let bedDecoration = [
   [12,12,12,12,12,12,12,12,12],
   [1,3,5,7,12,12,12],
   [2,4,6,8,12,12,12],
-  ]
+]
+
+let world5Collision = [
+  [1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,1,1,0,0,0,0,1],
+  [1,0,0,0,1,1,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1],
+]
 
 let world1TileSize = 64
 let world1CollisionTileSize = 64
@@ -77,6 +88,9 @@ let zoneAvailable = true;
 let keyFound=false;
 let menuDisplayed=false;
 
+let towelOpened=false;
+let fogImg=true;
+
 let fade;
 let fadeAmount = 1;
 let page = 1;
@@ -92,6 +106,7 @@ let bg2;
 canMove=0;
 canMove2=0;
 canMove3=0;
+canMove4=0;
 
 let w = 45;
 let h = 30;
@@ -107,6 +122,23 @@ let y = 100;
 let keyWidth = 100;
 let keyHeight = 100; 
 let offsetX, offsetY; // Mouseclick offset
+
+let irotate = 0;
+let previousRotation = 0; 
+let rotationCount = 0;
+
+let redLight=true;
+let babaDisplayed=false;
+let randomNbforbaba=0;
+let roundRandomNbforbaba=0;
+let i=0;
+let babaX=0;
+let babaY=0;
+let nbOfcollisionWithBaba=0;
+
+let gameOverBool=false;
+
+let health = 100;
 
 canvasHeight = PandC.length*world1TileSize;
 canvasWidth = PandC[0].length*world1TileSize
@@ -125,6 +157,21 @@ function preload(){
   bg2 = loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/Cuisine.png');
   digicode = loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/Digicode.png ');
   letter = loadImage('assets/Lettre.png ');
+  fog = loadImage('assets/fog.png');
+  towel = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/1.png')
+  towel2 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/2.png')
+  towel3 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/3.png')
+  mirror = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Vue\ 2.png')
+  pin = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Epingle.png')
+  salon = loadImage('assets/salon haut.png');
+  porteBlinde = loadImage("assets/mur2.png"); 
+  roue = loadImage("assets/roue.png"); 
+  green = loadImage("assets/murVert.png"); 
+  entrance = loadImage('assets/Tuiles/Meuble/Entree/entree.png ');
+  baba = loadImage('assets/Tuiles/Personnages/Babayaga/Babayaga.png');
+  baba1 = loadImage('assets/Tuiles/Personnages/Babayaga/Babayaga D.png');
+  baba2 = loadImage('assets/Tuiles/Personnages/Babayaga/Babayaga B.png');
+  keyhole = loadImage("assets/keyhole.png"); 
 }
 
 function setup() {
@@ -134,6 +181,7 @@ function setup() {
   worldtestTileDictionnary = { 
     0: createImage(1,1),
     12:loadImage('assets/Tuiles/Sol/SOL@4x.png'),
+    1:loadImage('assets/Tuiles/Meuble/Salon/Tapis/Vue\ de\ haut/tapis h-d@4x.png'),
   };
   worldDecorationTiles = { 
     0: createImage(1,1),
@@ -249,7 +297,7 @@ function setup() {
     7:loadImage('assets/Tuiles/Meuble/Salon/Porte coffre/Vue\ de\ haut/porte b-d@4x.png'),
     8:loadImage('assets/Tuiles/Meuble/Salon/Porte coffre/Vue\ de\ haut/porte b-g@4x.png'),
 
-    9:loadImage('assets/Tuiles/Meuble/Salon/Tapis/Vue\ de\ haut/tapis h-d@4x.png'),
+    //9:loadImage('assets/Tuiles/Meuble/Salon/Tapis/Vue\ de\ haut/tapis h-d@4x.png'),
 
   }
 
@@ -264,6 +312,7 @@ function setup() {
     "1-6": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-6.png"),
     "1-8": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-8.png"),
     "1-9": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/1-9.png"),
+    "2-1": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-1.png"),
     "2-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-2.png"),
     "2-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-3.png"),
     "2-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/2-4.png"),
@@ -293,7 +342,8 @@ function setup() {
     "8-2": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-2.png"),
     "8-3": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-3.png"),
     "8-4": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-4.png"),
-    "8-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-5.png")
+    "8-5": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-5.png"),
+    "8-6": loadImage("assets/Tuiles/Meuble/Cuisine/Vu de haut/8-6.png")
   };
 
   let doorLetterDecorationTiles = {
@@ -328,16 +378,24 @@ function setup() {
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
   
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,world4Decoration,doorDecoration]
+  // worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,world4Decoration,doorDecoration,world4Board]
   
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles, livingRoomDecorationTiles,doorLetterDecorationTiles]
+  // tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles, livingRoomDecorationTiles,doorLetterDecorationTiles,worldtestTileDictionnary]
   
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,world1TileSize,115]
+  // worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,world1TileSize,115,world1TileSize]
+
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,doorDecoration]
+  
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles,doorLetterDecorationTiles]
+  
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,115]
 
   img2.resize(200,0);
   img3.resize(400,0);
   img4.resize(150,0);
   biblio.resize(310,0);
+  roue.resize(200,0);
+  keyhole.resize(10,0)
 
   fade = 1
   let save = JSON.parse(localStorage.getItem("save"));
@@ -355,7 +413,10 @@ function setup() {
     currentFrontWorld=frontSave;
     collision=collisionSave;
   }
-  
+
+  angleMode(DEGREES);  
+  randomNbforbaba = random(0, 2);
+  roundRandomNbforbaba = round(randomNbforbaba);
 }
 
 function drawWorld(gameBoard,tileDictionnary,tileSize) {
@@ -384,54 +445,85 @@ function drawFront(gameBoard,tileDictionnary,tileSize) {
 
 /////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
-  if (currentFrontWorld===1 || currentFrontWorld>=8 && currentFrontWorld!=11) {
+  if (babaDisplayed===false) {
+    if (currentFrontWorld===1 || currentFrontWorld>=8 && currentFrontWorld!=10) {
+      if (keyIsDown(LEFT_ARROW)) {
+        currentHeroImage=hero1;
+        heroX -= 5;
+        if (checkCollision(collision,world1CollisionTileSize)) {
+          heroX += 5;
+        } 
+      }
+    
+      if (keyIsDown(RIGHT_ARROW)) {
+        currentHeroImage=hero2;
+        heroX += 5;
+        if (checkCollision(collision,world1CollisionTileSize)) {
+          heroX -= 5;
+        } 
+      }
+      
+      if (keyIsDown(UP_ARROW)) {
+        currentHeroImage=hero0;
+        heroY -= 5;
+        if (checkCollision(collision,world1CollisionTileSize)) {
+          heroY += 5;
+        } 
+      }
+    
+      if (keyIsDown(DOWN_ARROW)) {
+        currentHeroImage=hero3;
+        heroY += 5;
+        if (checkCollision(collision,world1CollisionTileSize)) {
+          heroY -= 5;
+        } 
+      }
+    }else{
+      if (keyIsDown(80)) {
+        localStorage.setItem("keyImgClicked", JSON.stringify(false));
+        currentWorld=0;
+        bool=true;
+        currentFrontWorld=1;  //retour au monde de décoration de base pour la chambre
+      }
+    }
+  
+    if (currentFrontWorld===12) {
+      if (keyIsDown(80)) {
+        currentWorld=2;
+        currentFrontWorld=9;
+        collision=world3Collision;    //retour au monde de décoration de base pour la cuisine
+      }
+    }
+  
+    if (currentFrontWorld===13 || currentFrontWorld===14) {
+      if (keyIsDown(80)) {
+        bool=true;
+        currentFrontWorld=8;
+        collision=world2Collision;    //retour au monde de décoration de base pour la salle de bain
+      }
+    }
+  
+    if (currentFrontWorld===15) {
+      if (keyIsDown(80)) {
+        //bool=true;
+        currentFrontWorld=20;
+        collision=world4Collision;    //retour au monde de décoration de base pour la salle de bain
+      }
+    }
+  }else{
     if (keyIsDown(LEFT_ARROW)) {
       currentHeroImage=hero1;
-      heroX -= 5;
-      if (checkCollision(collision,world1CollisionTileSize)) {
-        heroX += 5;
-      } 
     }
   
     if (keyIsDown(RIGHT_ARROW)) {
       currentHeroImage=hero2;
-      heroX += 5;
-      if (checkCollision(collision,world1CollisionTileSize)) {
-        heroX -= 5;
-      } 
     }
-    
-    if (keyIsDown(UP_ARROW)) {
-      currentHeroImage=hero0;
-      heroY -= 5;
-      if (checkCollision(collision,world1CollisionTileSize)) {
-        heroY += 5;
-      } 
-    }
-  
+
     if (keyIsDown(DOWN_ARROW)) {
       currentHeroImage=hero3;
-      heroY += 5;
-      if (checkCollision(collision,world1CollisionTileSize)) {
-        heroY -= 5;
-      } 
-    }
-  }else{
-    if (keyIsDown(80)) {
-      localStorage.setItem("keyImgClicked", JSON.stringify(false));
-      currentWorld=0;
-      bool=true;
-      currentFrontWorld=1;  //retour au monde de décoration de base
     }
   }
-
-  if (currentFrontWorld===12) {
-    if (keyIsDown(80)) {
-      currentWorld=2;
-      currentFrontWorld=9;
-      collision=world3Collision;
-    }
-  }
+  
 }
 /////////////////////////////////////////////////////
 
@@ -522,16 +614,47 @@ function addLetterSpacing(input, amount, spacer) {
   return characters.join(spacerCharacter);
 }
 
+function gameOver() {
+  background(0);
+  fill(255, 0, 0);
+  textSize(25);
+  textAlign(CENTER);
+  text("GAME OVER",width/2,height/2);
+  gameOverBool=true;
+}
+
+function won() {
+  background(0);
+  fill("green");
+  textSize(25);
+  textAlign(CENTER);
+  text("YOU WON",width/2,height/2);
+  gameOverBool=true;
+}
+
+let pinData = localStorage.setItem("pinFound", JSON.stringify(false));
+
+function decreaseHealth(amount) {
+  health -= amount;
+  
+  // Assurer que la santé ne devient pas négative
+  if (health < 0) {
+    health = 0;
+    won();
+  }
+}
+
 
 // Appelé en continue après le setup
 function draw() {
+  //console.log(currentFrontWorld);
   checkCollision(collision,world1CollisionTileSize)
 
   if (currentFrontWorld===8) {
     canMove++;
     if (canMove<=1) {
       heroX=7*world1TileSize;
-      heroY=7*world1TileSize;
+      heroY=6*world1TileSize;
     }
   }else if (currentFrontWorld===9) {
     canMove2++;
@@ -545,22 +668,64 @@ function draw() {
       heroX=4*world1TileSize;
       heroY=2*world1TileSize;
     }
+  }else if (currentFrontWorld===21) {
+    canMove4++;
+    if (canMove4<=1) {
+      heroX=9*world1TileSize;
+      heroY=4*world1TileSize;
+    }
   }
   
   //console.log(currentFrontWorld); 
-  if (currentFrontWorld===8) {
-    background(bg);
+  if (gameOverBool===false) {
+    if (currentFrontWorld===8) {
+      background(bg);
+    }
+  
+    if (currentFrontWorld===20) {
+      background(salon);
+    }
+  
+    if (currentFrontWorld===21) {
+      background(entrance);
+    }
+  
+    if (currentFrontWorld===12) {
+      background(digicode);
+    }
+  
+    if (currentFrontWorld===13 && bool) {
+      background(towel);
+    }
+    
+    let pinFound = JSON.parse(localStorage.getItem("pinFound"));
+    if (currentFrontWorld===14 && bool) {
+      background(mirror);
+      if (pinFound!==true) {
+        image(pin,455,295,64,64);
+      }
+    }
+  
+    if (currentFrontWorld===15 && redLight) {
+      background(porteBlinde);
+      push()
+      translate(355, 295);
+      //translate(width / 2, height / 2);
+      rotate(irotate);
+      imageMode(CENTER);
+      image(roue, 0, 0); 
+      pop();
+    }
+  
+    if (currentFrontWorld===9) {
+      let canvasHeight2=world3Board.length*world1TileSize;
+      let canvasWidth2 = world3Board[0].length*world1TileSize
+      let canvas2 = createCanvas(canvasWidth2,canvasHeight2);
+      canvas2.center();
+      background(bg2);
+    }
   }
-  if (currentFrontWorld===12) {
-    background(digicode);
-  }
-  if (currentFrontWorld===9) {
-    let canvasHeight2=world3Board.length*world1TileSize;
-    let canvasWidth2 = world3Board[0].length*world1TileSize
-    let canvas2 = createCanvas(canvasWidth2,canvasHeight2);
-    canvas2.center();
-    background(bg2);
-  }
+  
   let save = JSON.parse(localStorage.getItem("save"));      // SAVE OPENING
   
   ///////////////////////////////////////////////////// OPENING
@@ -618,44 +783,167 @@ function draw() {
   ////////////////////////////////////////////////////////// 
 
   ////////////////////////////////////////////////////////// DRAW WORLDS
-  if (bool && save>=1 && currentFrontWorld===5) {
-    imageMode(CORNER);
-    drawWorld(worlds[currentWorld],
-      tileDictionnaries[currentWorld],
-      worldsTileSizes[currentWorld]);
-    image(biblio, 180, 0);
-    
-  }else{
-    if (bool && save>=1) {
+  if (gameOverBool===false) {
+    if (bool && save>=1 && currentFrontWorld===5) {
       imageMode(CORNER);
-      if (currentWorld===0) {
-        background(0); 
-      }
-      if (currentFrontWorld!==8 && currentFrontWorld!==9 && currentFrontWorld!==12) {
-        drawWorld(worlds[currentWorld],
-                tileDictionnaries[currentWorld],
-                worldsTileSizes[currentWorld]);
-      }
+      drawWorld(worlds[currentWorld],
+        tileDictionnaries[currentWorld],
+        worldsTileSizes[currentWorld]);
+      image(biblio, 180, 0);
       
-      if (currentFrontWorld<3 || currentFrontWorld===8 || currentFrontWorld===9 || currentFrontWorld===10) {
-        image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
-      }
+    }else{
+      if (bool && save>=1) {
+        imageMode(CORNER);
+        if (currentWorld===0) {
+          background(0); 
+        }
+        if (currentFrontWorld!==8 && currentFrontWorld!==9 && currentFrontWorld<12) {
+          drawWorld(worlds[currentWorld],
+                  tileDictionnaries[currentWorld],
+                  worldsTileSizes[currentWorld]);
+        }
+        
+        if (currentFrontWorld<3 || currentFrontWorld===8 || currentFrontWorld===9 || currentFrontWorld===20 || currentFrontWorld===21) {
+          image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+        }
+  
+        //console.log("heroX : ", heroX, "heroY : ", heroY);
+        // console.log(5*world1TileSize);
+        if (heroX<=336 && heroX>=316 && currentFrontWorld===21 && heroY>=226 && heroY<=271) {
+          babaDisplayed=true;
+          let barWidth = 200;
+          let barHeight = 20;
+          let xPos = (width - barWidth) / 2;
+          let yPos = height-64;
+          fill(255); // Couleur de fond de la barre
+          rect(xPos, yPos, barWidth, barHeight);
+          
+          let healthWidth = map(health, 0, 100, 0, barWidth); // Calculer la largeur de la barre de vie en fonction de la santé actuelle
+          
+          fill(0, 255, 0); // Couleur de la barre de vie
+          rect(xPos, yPos, healthWidth, barHeight); // Dessiner la barre de vie
 
-      if (currentFrontWorld!==12) {
-        drawFront(worlds[currentFrontWorld],
-        tileDictionnaries[currentFrontWorld],
-        worldsTileSizes[currentFrontWorld]);
+          if (babaDisplayed && roundRandomNbforbaba===0) {
+            if (currentHeroImage!==hero2) {
+              if (health>50) {
+                i+=3;
+              }else if(health<50){
+                i+=4;
+              }else if (health<25) {
+                i+=5;
+              }
+              
+              babaX=8*world1TileSize-i;
+              babaY=3*world1TileSize+20;
+              image(baba, babaX, babaY, 130, 130);
+              if (babaX<=heroX) {
+                babaX=0;
+                nbOfcollisionWithBaba++
+                if (nbOfcollisionWithBaba===3) {
+                  gameOver();
+                }else{
+                  randomNbforbaba = random(0, 2);
+                  roundRandomNbforbaba = round(randomNbforbaba);
+                  i=0;
+                }
+              }
+            }else{
+              decreaseHealth(1);
+              randomNbforbaba = random(0, 2);
+              roundRandomNbforbaba = round(randomNbforbaba);
+              i=0;
+            }
+            
+          }else if (babaDisplayed && roundRandomNbforbaba===1) {
+            if (currentHeroImage!==hero3) {
+              if (health>50) {
+                i+=3;
+              }else if(health<50){
+                i+=4;
+              }else if (health<25) {
+                i+=5;
+              }
+              babaX=5*world1TileSize;
+              babaY=6*world1TileSize+20-i;
+              image(baba2, babaX, babaY, 130, 130);
+              if (babaY<=heroY) {
+                babaY=6*world1TileSize;
+                nbOfcollisionWithBaba++
+                if (nbOfcollisionWithBaba===3) {
+                  gameOver();
+                }else{
+                  randomNbforbaba = random(0, 2);
+                  roundRandomNbforbaba = round(randomNbforbaba);
+                  i=0;
+                }
+              }
+            }else{
+              decreaseHealth(1);
+              randomNbforbaba = random(0, 2);
+              roundRandomNbforbaba = round(randomNbforbaba);
+              i=0;
+            }
+          }else if (babaDisplayed && roundRandomNbforbaba===2){
+            if (currentHeroImage!==hero1) {
+              if (health>50) {
+                i+=3;
+              }else if(health<50){
+                i+=4;
+              }else if (health<25) {
+                i+=5;
+              }
+              babaX=1*world1TileSize+i;
+              babaY=3*world1TileSize+20;
+              image(baba1,babaX ,babaY , 130, 130);
+              if (babaX>=heroX) {
+                babaX=1*world1TileSize;
+                nbOfcollisionWithBaba++
+                if (nbOfcollisionWithBaba===3) {
+                  gameOver();
+                }else{
+                  randomNbforbaba = random(0, 2);
+                  roundRandomNbforbaba = round(randomNbforbaba);
+                  i=0;
+                }
+              }
+            }else{
+              decreaseHealth(1);
+              randomNbforbaba = random(0, 2);
+              roundRandomNbforbaba = round(randomNbforbaba);
+              i=0;
+            }
+            
+          }
+        }
+
+        if (currentFrontWorld<12) {
+          drawFront(worlds[currentFrontWorld],
+          tileDictionnaries[currentFrontWorld],
+          worldsTileSizes[currentFrontWorld]);
+        }
+        let fogImg = JSON.parse(localStorage.getItem("fogImg"));
+        if (typeof fogImg === 'boolean') {
+          if (currentFrontWorld===8 && fogImg) {
+            image(fog,0,0,704,576);
+          }
+        }else{
+          if (currentFrontWorld===8) {
+            image(fog,0,0,704,576);
+          }
+        }
+        
+        
       }
-      
     }
   }
+  
   
   
   //////////////////////////////////////////////////////////
   
   
   ////////////////////////////////////////////////////////// TEST CONTACT WITH INTERACTABLE OBJECTS
-  if (txt && currentFrontWorld===1 || txt && currentFrontWorld===8 || txt && currentFrontWorld===9) {
+  if (txt && currentFrontWorld===1 || txt && currentFrontWorld===8 || txt && currentFrontWorld===9 || txt && currentFrontWorld===20) {
     textSize(22);
     textFont('Arial');
     fill('white');
@@ -682,7 +970,7 @@ function draw() {
   }
   //////////////////////////////////////////////////////////
   //console.log(currentFrontWorld);
-  if (currentFrontWorld>2 && currentFrontWorld < 8 || currentFrontWorld===11) {
+  if (currentFrontWorld>2 && currentFrontWorld < 8 || currentFrontWorld===10 || currentFrontWorld>=13 && currentFrontWorld<20) {
     fill('white');
     text("P to exit", 300, 565);
   }
@@ -741,7 +1029,7 @@ function draw() {
         }
       }
     }
-  }else if (currentFrontWorld===11){
+  }else if (currentFrontWorld===10){
     if (mouseIsPressed === true) {
       if (pointIsInObjective(335,200, mouseX,mouseY, 100,150)) {
         bool=false;
@@ -753,55 +1041,111 @@ function draw() {
         //zoneAvailable = false;
       }
     }
+  }else if (currentFrontWorld===13) {
+    if (mouseIsPressed === true) {
+      if (towelOpened===false) {
+        if (pointIsInObjective(300,250, mouseX,mouseY, 100,150)) {
+          bool=false;
+          background(towel2);
+          setTimeout(() => {
+            background(towel3);
+          }, 100);
+          towelOpened=true;
+        }
+      }
+      
+    }
+
+    if (towelOpened) {
+      if (mouseIsPressed===true) {
+        if (pointIsInObjective(380,355,mouseX,mouseY,20,20)) {
+          localStorage.setItem("fogImg", JSON.stringify(false));
+        }
+      }
+    }
+  }else if (currentFrontWorld===14) {
+    if (mouseIsPressed === true) {
+      if (pointIsInObjective(465,300, mouseX,mouseY, 60,30)) {
+        localStorage.setItem("pinFound", JSON.stringify(true));
+        bool=false;
+        image(mirror,0,0,704,576)
+      }
+    }
+  }else if (currentFrontWorld===15) {
+    if (mouseIsPressed === true) {
+      if(pointIsInObjective(250, 200,mouseX,mouseY, 200, 200)){
+        let coteAdjacent = mouseX - 355;
+        let coteOpposee = mouseY - 295;
+        angle = atan(coteOpposee/coteAdjacent);
+        irotate = angle;
+        //console.log(angle);
+        if (angle >= 80) {
+          rotationCount+=0.25;
+          angle=0;
+          if (rotationCount===3) {
+            background(green);
+            redLight=false;
+            setTimeout(() => {
+              localStorage.setItem("frontSave", JSON.stringify(21));
+              localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
+
+              currentFrontWorld=21;
+              collision=world5Collision;
+            }, 1000);
+            
+          }
+        }
+      }
+    }
   }
+  
 
   let keyClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
-  if (currentFrontWorld===7 && keyClicked) {
-    image(theKey,x, y,100,50)
-    // Is mouse over object
-    if (mouseX > x && mouseX < x + keyWidth && mouseY > y && mouseY < y + keyHeight) {
-      rollover = true;
-    } else {
-      rollover = false;
-    }
-
-    // Adjust location if being dragged
-    if (dragging) {
-      x = mouseX + offsetX;
-      y = mouseY + offsetY;
-    }
-
-    if (mouseIsPressed===true) {
+  if (currentFrontWorld===7) {
+    image(keyhole,267,395)
+    if (keyClicked) {
+      image(theKey,x, y,100,50)
+      // Is mouse over object
       if (mouseX > x && mouseX < x + keyWidth && mouseY > y && mouseY < y + keyHeight) {
-        dragging = true;
-        offsetX = x - mouseX;
-        offsetY = y - mouseY;
+        rollover = true;
+      } else {
+        rollover = false;
       }
-    }else{
-      // Quit dragging
-      dragging = false;
 
-      if ((x>0) && (x<0+100)){
-        if ((y>0) && (y<0+100)){
+      // Adjust location if being dragged
+      if (dragging) {
+        x = mouseX + offsetX;
+        y = mouseY + offsetY;
+      }
+
+      if (mouseIsPressed===true) {
+        if (mouseX > x && mouseX < x + keyWidth && mouseY > y && mouseY < y + keyHeight) {
+          dragging = true;
+          offsetX = x - mouseX;
+          offsetY = y - mouseY;
+        }
+      }else{
+        // Quit dragging
+        dragging = false;
+
+        if (pointIsInObjective(250,350,x,y,100,100)){
           localStorage.setItem("save", JSON.stringify(2));
           localStorage.setItem("frontSave", JSON.stringify(8));
           localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
           
           currentWorld=2;
           currentFrontWorld=8;
-          collision=world2Collision;
-        }    
+          collision=world2Collision;  
+        }
       }
     }
     
-    fill(0);
-    rect(0,0,100,100)
   }
 
   let brightness = JSON.parse(localStorage.getItem("brightness"));
   adjustBrightness(brightness);
 
-  if (res==="1256") {
+  if (res==="7225") {
     localStorage.setItem("passwordFound", JSON.stringify(true));
     fill('green');
   }else if (res.length>4) {
@@ -809,7 +1153,7 @@ function draw() {
     fill('red');
   }
   let digicodeNumbers = addLetterSpacing(res, 15, '\u2007');
-  //rect(335,200,100,150);
+  //rect(465,300,60,30);
   if (currentFrontWorld===12) {
     text(digicodeNumbers, 270, 175);
   }
@@ -873,6 +1217,7 @@ let inventoryCanvas = () => {
 
     sketch.preload = function(){
       theKey = loadImage('assets/key.png');
+      pin = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Epingle.png')
     }
   
     sketch.setup = function() {
@@ -913,6 +1258,7 @@ let inventoryCanvas = () => {
     };
     
     localStorage.setItem("keyImgClicked", JSON.stringify(false));
+    localStorage.setItem("keyFound", JSON.stringify(false));
     sketch.draw = function() {
       sketch.background(100);
       sketch.imageMode(CORNER);
@@ -930,6 +1276,10 @@ let inventoryCanvas = () => {
       let keyImgClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
       if (keyFound && keyImgClicked===false) {
         sketch.image(theKey,  30, 240,100,40);
+      }
+      let pinFound = JSON.parse(localStorage.getItem("pinFound"));
+      if (pinFound) {
+        sketch.image(pin,  15, 200);
       }
       //sketch.rect(30, 240,100,40);
     }
