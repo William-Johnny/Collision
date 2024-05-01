@@ -10,7 +10,7 @@ function checkCollision(gameBoard,tileSize) {
       }
       
       if (currentFrontWorld===1) {
-        if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6 || currentTileValue===7 || currentTileValue===10 || currentTileValue===8) {
+        if (currentTileValue===3 || currentTileValue===4 || currentTileValue===5 || currentTileValue===6 || currentTileValue===7 || currentTileValue===8) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
             return  true
           }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
@@ -21,7 +21,7 @@ function checkCollision(gameBoard,tileSize) {
       }
 
       //let save = JSON.parse(localStorage.getItem("save"));
-      if (currentFrontWorld===8) {
+      if (currentFrontWorld===50) {
         if (currentTileValue===13) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
             txt = true;
@@ -75,19 +75,18 @@ function checkCollision(gameBoard,tileSize) {
             }
             
           } 
+        }else if (currentTileValue===25 || currentTileValue===26 || currentTileValue===27 ) {
+          if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            return  true
+          }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
+            txt = true;
+            tile=currentTileValue;
+          } 
         }
-        // else if (currentTileValue===25 || currentTileValue===26 || currentTileValue===27 ) {
-        //   if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-        //     return  true
-        //   }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
-        //     txt = true;
-        //     tile=currentTileValue;
-        //   } 
-        // }
       }
 
       if (currentFrontWorld===20) {
-        if (currentTileValue===15) {
+        if (currentTileValue===15 || currentTileValue===28) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
             return  true
           }else if (rectIsInRect(heroX+10,heroY+10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize) || rectIsInRect(heroX-10,heroY-10,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {

@@ -140,6 +140,16 @@ let gameOverBool=false;
 
 let health = 100;
 
+let canDisplayDialogue = true;
+let canDisplayPcDialogue = true;
+let canDisplayPcDialogueLRDoor = true;
+let canDisplayP = false;
+let canDisplayPforLRDoor = false;
+
+let progress = 0;
+
+let dollTaken = false;
+
 canvasHeight = PandC.length*world1TileSize;
 canvasWidth = PandC[0].length*world1TileSize
 
@@ -172,10 +182,26 @@ function preload(){
   baba1 = loadImage('assets/Tuiles/Personnages/Babayaga/Babayaga D.png');
   baba2 = loadImage('assets/Tuiles/Personnages/Babayaga/Babayaga B.png');
   keyhole = loadImage("assets/keyhole.png"); 
+  mainKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/1.png ");
+  secondaryKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 2/2.png ");
+  kitchenWall = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 4/4.png "); 
+  cupboard1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/1.png "); 
+  cupboard2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/2.png  "); 
+  cupboard3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/3.png "); 
+  roomWithDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/mur\ 1@4x.png"); 
+  noDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/sans poupée @4x.png"); 
+  doll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/doll.png");
+  d1 = loadImage("assets/Dialogue/chambre 1@4x.png"); 
+  d2 = loadImage("assets/Dialogue/chambre 2@4x.png");
+  d3 = loadImage("assets/Dialogue/entrée@4x.png");
+  heroWithDoll = loadImage("assets/Tuiles/Personnages/Garçon/Avec\ poupée.png"); 
+  loadingScreen1 = loadImage("assets/Tuiles/1.png"); 
+  lightFog = loadImage("assets/lightFog.png");
 }
 
 function setup() {
   let canvas = createCanvas(canvasWidth,canvasHeight);
+  //let canvas = createCanvas(windowWidth, windowHeight);
   canvas.center();
 
   worldtestTileDictionnary = { 
@@ -256,32 +282,6 @@ function setup() {
 
   PandCTiles = {
     12:loadImage('assets/Tuiles/Mur/Chambre/mur base@4x.png'),
-  }
-
-  bathroomDecorationTiles = { 
-    0: createImage(1,1),
-    12: createImage(1,1),
-    1:loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/Toilettes.png'),
-
-    5:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 2.png'),
-    6:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 1.png'),
-    7:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 3.png'),
-    8:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 4.png'),
-    9:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 5.png'),
-    10:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 6.png'),
-    11:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 7.png'),
-    13:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Baignoire 8.png'),
-
-    3:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Lavabo G.png'),
-    4:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Lavabo D.png'),
-
-    14:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/ps.png'),
-
-    15:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Porte G.png'),
-    16:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Porte D.png'),
-    
-    17:loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Aeration.png'),
-    
   }
 
   livingRoomDecorationTiles = { 
@@ -377,38 +377,40 @@ function setup() {
   hero2 = loadImage('assets/Tuiles/Personnages/Garçon/d.png');
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
   currentHeroImage=hero0;
-  
-  // worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,world4Decoration,doorDecoration,world4Board]
-  
-  // tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles, livingRoomDecorationTiles,doorLetterDecorationTiles,worldtestTileDictionnary]
-  
-  // worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,world1TileSize,115,world1TileSize]
 
-  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world2Decoration,world3Decoration,doorDecoration]
+  // worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,world3Decoration,doorDecoration]
   
-  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,bathroomDecorationTiles,kitchenDecorationTiles,doorLetterDecorationTiles]
+  // tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,kitchenDecorationTiles,doorLetterDecorationTiles]
   
-  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,115]
+  // worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,world1TileSize,world1TileSize,115]
+
+  worlds = [worldtestBoard,world1Decoration,PandC,deskDecoration,bedDecoration,bilioDecoration,furnitureDecoration,doorDecoration,doorDecoration]
+  
+  tileDictionnaries = [worldtestTileDictionnary,worldDecorationTiles,PandCTiles,deskDecorationTiles,bedDecorationTiles,biblioDecorationTiles,furnitureDecorationTile,doorDecorationTile,doorLetterDecorationTiles]
+  
+  worldsTileSizes = [world1TileSize,world1CollisionTileSize,world1TileSize,deskDecorationTileSize,bedDecorationTileSize,biblioDecorationTileSize,furnitureDecorationTileSize,doorDecorationTileSize,doorDecorationTileSize]
 
   img2.resize(200,0);
   img3.resize(400,0);
   img4.resize(150,0);
   biblio.resize(310,0);
   roue.resize(200,0);
-  keyhole.resize(10,0)
+  keyhole.resize(10,0);
+  d1.resize(0,110);
+  d2.resize(0,110);
+  d3.resize(0,110);
 
   fade = 1
   let save = JSON.parse(localStorage.getItem("save"));
   let frontSave = JSON.parse(localStorage.getItem("frontSave"));
   let collisionSave = JSON.parse(localStorage.getItem("collisionSave"));
+
   if (save<1) {
     button = createButton('Play');
     button.center();
     button.mousePressed(playSound);
     button.style('font-family', 'American Typewriter');
-  }else if (save===1) {
-    currentWorld=0;
-  }else{
+  }else if (save===2) {
     currentWorld=save;
     currentFrontWorld=frontSave;
     collision=collisionSave;
@@ -417,6 +419,8 @@ function setup() {
   angleMode(DEGREES);  
   randomNbforbaba = random(0, 2);
   roundRandomNbforbaba = round(randomNbforbaba);
+
+  //console.log(frontSave);
 }
 
 function drawWorld(gameBoard,tileDictionnary,tileSize) {
@@ -446,13 +450,14 @@ function drawFront(gameBoard,tileDictionnary,tileSize) {
 /////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
   if (babaDisplayed===false) {
-    if (currentFrontWorld===1 || currentFrontWorld>=8 && currentFrontWorld!=10) {
+    if (currentFrontWorld===1 || currentFrontWorld>8 && currentFrontWorld!=10) {
       if (keyIsDown(LEFT_ARROW)) {
         currentHeroImage=hero1;
         heroX -= 5;
         if (checkCollision(collision,world1CollisionTileSize)) {
           heroX += 5;
         } 
+        canDisplayDialogue=false;
       }
     
       if (keyIsDown(RIGHT_ARROW)) {
@@ -461,6 +466,7 @@ const checkKeys = (currentMap)=>{
         if (checkCollision(collision,world1CollisionTileSize)) {
           heroX -= 5;
         } 
+        canDisplayDialogue=false;
       }
       
       if (keyIsDown(UP_ARROW)) {
@@ -469,6 +475,7 @@ const checkKeys = (currentMap)=>{
         if (checkCollision(collision,world1CollisionTileSize)) {
           heroY += 5;
         } 
+        canDisplayDialogue=false;
       }
     
       if (keyIsDown(DOWN_ARROW)) {
@@ -477,18 +484,21 @@ const checkKeys = (currentMap)=>{
         if (checkCollision(collision,world1CollisionTileSize)) {
           heroY -= 5;
         } 
+        canDisplayDialogue=false;
       }
     }else{
       if (keyIsDown(80)) {
         localStorage.setItem("keyImgClicked", JSON.stringify(false));
         currentWorld=0;
         bool=true;
+        canDisplayP=false;
         currentFrontWorld=1;  //retour au monde de décoration de base pour la chambre
       }
     }
   
-    if (currentFrontWorld===12) {
+    if (currentFrontWorld===12 || currentFrontWorld===25 || currentFrontWorld===26 || currentFrontWorld===27) {
       if (keyIsDown(80)) {
+        bool=true;
         currentWorld=2;
         currentFrontWorld=9;
         collision=world3Collision;    //retour au monde de décoration de base pour la cuisine
@@ -498,19 +508,19 @@ const checkKeys = (currentMap)=>{
     if (currentFrontWorld===13 || currentFrontWorld===14) {
       if (keyIsDown(80)) {
         bool=true;
-        currentFrontWorld=8;
+        currentFrontWorld=50;
         collision=world2Collision;    //retour au monde de décoration de base pour la salle de bain
       }
     }
   
-    if (currentFrontWorld===15) {
+    if (currentFrontWorld===15 || currentFrontWorld===28) {
       if (keyIsDown(80)) {
-        //bool=true;
+        bool=true;
         currentFrontWorld=20;
-        collision=world4Collision;    //retour au monde de décoration de base pour la salle de bain
+        collision=world4Collision;    //retour au monde de décoration de base pour le salon
       }
     }
-  }else{
+  }else{    // restriction de certain mouvement si Baba Yaga apparait
     if (keyIsDown(LEFT_ARROW)) {
       currentHeroImage=hero1;
     }
@@ -617,17 +627,23 @@ function addLetterSpacing(input, amount, spacer) {
 function gameOver() {
   background(0);
   fill(255, 0, 0);
-  textSize(25);
+  textSize(100);
   textAlign(CENTER);
+  textFont(fontRegular);
   text("GAME OVER",width/2,height/2);
   gameOverBool=true;
+  button = createButton('New Game ?');
+  button.position(width/2,height/2+50);
+  button.mousePressed(localStorage.clear());
+  button.style('font-family', 'American Typewriter');
 }
 
 function won() {
   background(0);
   fill("green");
-  textSize(25);
+  textSize(100);
   textAlign(CENTER);
+  textFont(fontRegular);
   text("YOU WON",width/2,height/2);
   gameOverBool=true;
 }
@@ -644,13 +660,13 @@ function decreaseHealth(amount) {
   }
 }
 
-
+let dollFound = JSON.parse(localStorage.getItem("dollFound"));
 // Appelé en continue après le setup
 function draw() {
-  //console.log(currentFrontWorld);
+  //console.log(currentFrontWorld,currentWorld);
   checkCollision(collision,world1CollisionTileSize)
 
-  if (currentFrontWorld===8) {
+  if (currentFrontWorld===50) {
     canMove++;
     if (canMove<=1) {
       heroX=7*world1TileSize;
@@ -678,7 +694,7 @@ function draw() {
   
   //console.log(currentFrontWorld); 
   if (gameOverBool===false) {
-    if (currentFrontWorld===8) {
+    if (currentFrontWorld===50) {
       background(bg);
     }
   
@@ -693,16 +709,37 @@ function draw() {
     if (currentFrontWorld===12) {
       background(digicode);
     }
-  
+    
+    if (currentFrontWorld===25 && bool) {
+      background(mainKitchenFurniture);
+    }
+    if (currentFrontWorld===27) {
+      background(secondaryKitchenFurniture);
+    }
+    if (currentFrontWorld===26) {
+      background(kitchenWall);
+    }
+    
     if (currentFrontWorld===13 && bool) {
       background(towel);
+      image(lightFog,0,0,704,576)
+    }
+    //console.log(dollFound);
+    if (currentFrontWorld===28 && bool && dollFound!==true) {
+      background(roomWithDoll);
+    }else if(currentFrontWorld===28 && bool && dollFound===true){
+      background(noDoll);
     }
     
     let pinFound = JSON.parse(localStorage.getItem("pinFound"));
+    fogImg = JSON.parse(localStorage.getItem("fogImg"));
     if (currentFrontWorld===14 && bool) {
       background(mirror);
-      if (pinFound!==true) {
+      if (pinFound!==true && typeof fogImg === 'boolean') {
         image(pin,455,295,64,64);
+      }
+      if (typeof fogImg !== 'boolean') {
+        image(fog,0,0,704,576);
       }
     }
   
@@ -715,6 +752,12 @@ function draw() {
       imageMode(CENTER);
       image(roue, 0, 0); 
       pop();
+      if (canDisplayPcDialogueLRDoor){
+        image(d3,-40,canvasHeight-120);
+        setTimeout(() => {
+          canDisplayPcDialogueLRDoor=false
+        }, 2000);
+      }
     }
   
     if (currentFrontWorld===9) {
@@ -780,11 +823,32 @@ function draw() {
       }
     }
   }
+
+  if (save===1) {
+
+    background(loadingScreen1);
+      
+    // Dessiner la barre de chargement
+    fill(50);
+    rect(100, 100, 200, 20);
+    
+    // Dessiner la progression
+    fill(0, 200, 0);
+    let progressWidth = map(progress, 0, 100, 0, 200);
+    rect(100, 100, progressWidth, 20);
+
+    if (progress < 100) {
+      progress += 0.1;
+    }else{
+      localStorage.setItem("save", JSON.stringify(2));
+    }
+
+  }
   ////////////////////////////////////////////////////////// 
 
   ////////////////////////////////////////////////////////// DRAW WORLDS
   if (gameOverBool===false) {
-    if (bool && save>=1 && currentFrontWorld===5) {
+    if (bool && save===2 && currentFrontWorld===5) {
       imageMode(CORNER);
       drawWorld(worlds[currentWorld],
         tileDictionnaries[currentWorld],
@@ -792,19 +856,23 @@ function draw() {
       image(biblio, 180, 0);
       
     }else{
-      if (bool && save>=1) {
+      if (bool && save===2) {
         imageMode(CORNER);
         if (currentWorld===0) {
           background(0); 
         }
-        if (currentFrontWorld!==8 && currentFrontWorld!==9 && currentFrontWorld<12) {
+        if (currentFrontWorld!==9 && currentFrontWorld<12) {
           drawWorld(worlds[currentWorld],
                   tileDictionnaries[currentWorld],
                   worldsTileSizes[currentWorld]);
         }
         
-        if (currentFrontWorld<3 || currentFrontWorld===8 || currentFrontWorld===9 || currentFrontWorld===20 || currentFrontWorld===21) {
-          image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+        if (currentFrontWorld<3 || currentFrontWorld===50 || currentFrontWorld===9 || currentFrontWorld===20 || currentFrontWorld===21) {
+          if (babaDisplayed===false) {
+            image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
+          }else{
+            image(heroWithDoll, heroX, heroY, heroWidth, heroHeight);
+          }
         }
   
         //console.log("heroX : ", heroX, "heroY : ", heroY);
@@ -827,9 +895,9 @@ function draw() {
             if (currentHeroImage!==hero2) {
               if (health>50) {
                 i+=3;
-              }else if(health<50){
+              }else if(health<=50){
                 i+=4;
-              }else if (health<25) {
+              }else if (health<=25) {
                 i+=5;
               }
               
@@ -842,14 +910,14 @@ function draw() {
                 if (nbOfcollisionWithBaba===3) {
                   gameOver();
                 }else{
-                  randomNbforbaba = random(0, 2);
+                  randomNbforbaba = random(1,2);
                   roundRandomNbforbaba = round(randomNbforbaba);
                   i=0;
                 }
               }
             }else{
               decreaseHealth(1);
-              randomNbforbaba = random(0, 2);
+              randomNbforbaba = random(1, 2);
               roundRandomNbforbaba = round(randomNbforbaba);
               i=0;
             }
@@ -858,9 +926,9 @@ function draw() {
             if (currentHeroImage!==hero3) {
               if (health>50) {
                 i+=3;
-              }else if(health<50){
+              }else if(health<=50){
                 i+=4;
-              }else if (health<25) {
+              }else if (health<=25) {
                 i+=5;
               }
               babaX=5*world1TileSize;
@@ -872,14 +940,14 @@ function draw() {
                 if (nbOfcollisionWithBaba===3) {
                   gameOver();
                 }else{
-                  randomNbforbaba = random(0, 2);
+                  randomNbforbaba = random([0, 2]);
                   roundRandomNbforbaba = round(randomNbforbaba);
                   i=0;
                 }
               }
             }else{
               decreaseHealth(1);
-              randomNbforbaba = random(0, 2);
+              randomNbforbaba = random([0, 2]);
               roundRandomNbforbaba = round(randomNbforbaba);
               i=0;
             }
@@ -887,9 +955,9 @@ function draw() {
             if (currentHeroImage!==hero1) {
               if (health>50) {
                 i+=3;
-              }else if(health<50){
+              }else if(health<=50){
                 i+=4;
-              }else if (health<25) {
+              }else if (health<=25) {
                 i+=5;
               }
               babaX=1*world1TileSize+i;
@@ -901,14 +969,14 @@ function draw() {
                 if (nbOfcollisionWithBaba===3) {
                   gameOver();
                 }else{
-                  randomNbforbaba = random(0, 2);
+                  randomNbforbaba = random(0, 1);
                   roundRandomNbforbaba = round(randomNbforbaba);
                   i=0;
                 }
               }
             }else{
               decreaseHealth(1);
-              randomNbforbaba = random(0, 2);
+              randomNbforbaba = random(0, 1);
               roundRandomNbforbaba = round(randomNbforbaba);
               i=0;
             }
@@ -916,18 +984,18 @@ function draw() {
           }
         }
 
-        if (currentFrontWorld<12) {
+        if (currentFrontWorld<12 && currentFrontWorld!==9) {
           drawFront(worlds[currentFrontWorld],
           tileDictionnaries[currentFrontWorld],
           worldsTileSizes[currentFrontWorld]);
         }
         let fogImg = JSON.parse(localStorage.getItem("fogImg"));
         if (typeof fogImg === 'boolean') {
-          if (currentFrontWorld===8 && fogImg) {
+          if (currentFrontWorld===50 && fogImg) {
             image(fog,0,0,704,576);
           }
         }else{
-          if (currentFrontWorld===8) {
+          if (currentFrontWorld===50) {
             image(fog,0,0,704,576);
           }
         }
@@ -943,25 +1011,11 @@ function draw() {
   
   
   ////////////////////////////////////////////////////////// TEST CONTACT WITH INTERACTABLE OBJECTS
-  if (txt && currentFrontWorld===1 || txt && currentFrontWorld===8 || txt && currentFrontWorld===9 || txt && currentFrontWorld===20) {
-    textSize(22);
-    textFont('Arial');
+  if (txt && currentFrontWorld===1 || txt && currentFrontWorld===50 || txt && currentFrontWorld===9 || txt && currentFrontWorld===20) {
+    textSize(50);
+    textFont(fontRegular);
     fill('white');
     text("M to interact", 370, 200);
-    if (keyIsDown(77)) {
-      currentWorld=2;
-      currentFrontWorld=tile;
-    }
-    if (keyIsDown(77)) {
-      currentWorld=2;
-      currentFrontWorld=tile;
-    }
-  
-    if (keyIsDown(77)) {
-      currentWorld=2;
-      currentFrontWorld=tile;
-    }
-  
     if (keyIsDown(77)) {
       currentWorld=2;
       currentFrontWorld=tile;
@@ -970,13 +1024,41 @@ function draw() {
   }
   //////////////////////////////////////////////////////////
   //console.log(currentFrontWorld);
-  if (currentFrontWorld>2 && currentFrontWorld < 8 || currentFrontWorld===10 || currentFrontWorld>=13 && currentFrontWorld<20) {
+  if (currentFrontWorld>2 && currentFrontWorld < 8 || currentFrontWorld===10 || currentFrontWorld>=13 && currentFrontWorld<20 && currentFrontWorld!==15|| currentFrontWorld===28) {
     fill('white');
+    textFont(fontRegular);
+    textSize(50);
     text("P to exit", 300, 565);
   }
 
-  if (currentFrontWorld===12) {
+  if (currentFrontWorld===8) {
+    setTimeout(() => {
+      canDisplayP=true;
+    }, 2000);
+    if (canDisplayP) {
+      fill('white');
+      textFont(fontRegular);
+      textSize(50);
+      text("P to exit", 300, 565);
+    }
+  }
+
+  if (currentFrontWorld===15) {
+    setTimeout(() => {
+      canDisplayPforLRDoor=true;
+    }, 2000);
+    if (canDisplayPforLRDoor) {
+      fill('white');
+      textFont(fontRegular);
+      textSize(50);
+      text("P to exit", 300, 500);
+    }
+  }
+
+  if (currentFrontWorld===12 || currentFrontWorld>=25 && currentFrontWorld<28) {
     fill('white');
+    textFont(fontRegular);
+    textSize(50);
     text("P to exit", 300, 500);
   }
 
@@ -1029,7 +1111,7 @@ function draw() {
         }
       }
     }
-  }else if (currentFrontWorld===10){
+  }else if (currentFrontWorld===8){
     if (mouseIsPressed === true) {
       if (pointIsInObjective(335,200, mouseX,mouseY, 100,150)) {
         bool=false;
@@ -1047,8 +1129,10 @@ function draw() {
         if (pointIsInObjective(300,250, mouseX,mouseY, 100,150)) {
           bool=false;
           background(towel2);
+          image(lightFog,0,0,704,576)
           setTimeout(() => {
             background(towel3);
+            image(lightFog,0,0,704,576)
           }, 100);
           towelOpened=true;
         }
@@ -1060,6 +1144,7 @@ function draw() {
       if (mouseIsPressed===true) {
         if (pointIsInObjective(380,355,mouseX,mouseY,20,20)) {
           localStorage.setItem("fogImg", JSON.stringify(false));
+          image(towel3,0,0,704,576);
         }
       }
     }
@@ -1072,34 +1157,57 @@ function draw() {
       }
     }
   }else if (currentFrontWorld===15) {
-    if (mouseIsPressed === true) {
-      if(pointIsInObjective(250, 200,mouseX,mouseY, 200, 200)){
-        let coteAdjacent = mouseX - 355;
-        let coteOpposee = mouseY - 295;
-        angle = atan(coteOpposee/coteAdjacent);
-        irotate = angle;
-        //console.log(angle);
-        if (angle >= 80) {
-          rotationCount+=0.25;
-          angle=0;
-          if (rotationCount===3) {
-            background(green);
-            redLight=false;
-            setTimeout(() => {
-              localStorage.setItem("frontSave", JSON.stringify(21));
-              localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
+    //canDisplayPcDialogue=true;
+    if (dollTaken) {
+      if (mouseIsPressed === true) {
+        if(pointIsInObjective(250, 200,mouseX,mouseY, 200, 200)){   
+          let coteAdjacent = mouseX - 355;
+          let coteOpposee = mouseY - 295;
+          angle = atan(coteOpposee/coteAdjacent);
+          irotate = angle;
+          //console.log(angle);
+          if (angle >= 80) {
+            rotationCount+=0.25;
+            angle=0;
+            if (rotationCount===3) {
+              background(green);
+              redLight=false;
+              setTimeout(() => {
+                localStorage.setItem("frontSave", JSON.stringify(21));
+                localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
 
-              currentFrontWorld=21;
-              collision=world5Collision;
-            }, 1000);
-            
+                currentFrontWorld=21;
+                collision=world5Collision;
+              }, 1000);
+              
+            }
           }
         }
       }
     }
+  }else if (currentFrontWorld===25) {
+    if (mouseIsPressed === true) {
+      if(pointIsInObjective(350, 0, mouseX,mouseY, 100, 120)){
+        bool=false;
+        background(cupboard1);
+          setTimeout(() => {
+            background(cupboard2);
+          }, 100);
+          setTimeout(() => {
+            background(cupboard3);
+          }, 200);
+      }
+    }
+  }else if (currentFrontWorld===28) {
+    if (mouseIsPressed === true) {
+      if(pointIsInObjective(370, 360,mouseX,mouseY, 50, 60)){
+        bool=false;
+        dollTaken=true;
+        localStorage.setItem("dollFound", JSON.stringify(true));
+        background(noDoll);
+      }
+    }
   }
-  
-
   let keyClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
   if (currentFrontWorld===7) {
     image(keyhole,267,395)
@@ -1129,12 +1237,10 @@ function draw() {
         dragging = false;
 
         if (pointIsInObjective(250,350,x,y,100,100)){
-          localStorage.setItem("save", JSON.stringify(2));
-          localStorage.setItem("frontSave", JSON.stringify(8));
+          localStorage.setItem("frontSave", JSON.stringify(50));
           localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
           
-          currentWorld=2;
-          currentFrontWorld=8;
+          currentFrontWorld=50;
           collision=world2Collision;  
         }
       }
@@ -1155,10 +1261,23 @@ function draw() {
   let digicodeNumbers = addLetterSpacing(res, 15, '\u2007');
   //rect(465,300,60,30);
   if (currentFrontWorld===12) {
+    textFont("Arial");
+    textSize(20);
     text(digicodeNumbers, 270, 175);
+  }
+
+  if (save===2 && canDisplayDialogue && currentFrontWorld===1) {
+    image(d1,-40,canvasHeight-60);
+  }else if (currentFrontWorld===8 && canDisplayPcDialogue){
+    setTimeout(() => {
+      canDisplayPcDialogue=false
+    }, 2000);
+    image(d2,-40,canvasHeight-60);
   }
   
   checkKeys(currentWorld);
+  // fill("red");
+  // rect(370, 360, 50, 60)
 }
 
 let menuCanvas = () => {
@@ -1280,6 +1399,10 @@ let inventoryCanvas = () => {
       let pinFound = JSON.parse(localStorage.getItem("pinFound"));
       if (pinFound) {
         sketch.image(pin,  15, 200);
+      }
+      let dollFound = JSON.parse(localStorage.getItem("dollFound"));
+      if (dollFound) {
+        sketch.image(doll,  28, 210,100,100);
       }
       //sketch.rect(30, 240,100,40);
     }
