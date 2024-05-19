@@ -1,3 +1,3 @@
-# Collision
+# Darvoza
 
-Ce projet a été fait dans le cadre d'un cours pour nous familiariser avec p5.js et apprendre à gérer les collisions dans l'objectif de réaliser un jeu vidéo 2D.
+Projet de fin d'année sous forme de jeu vidéo 2d réalisé en collaboration avec des designers.
