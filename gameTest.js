@@ -279,7 +279,7 @@ function preload(){
   cupboard2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/2.png  "); 
   cupboard3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/3.png "); 
   roomWithDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/mur\ 1@4x.png"); 
-  noDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/sans poupée @4x.png"); 
+  noDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/noDoll @4x.png"); 
   doll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/doll.png");
   d1 = loadImage("assets/Dialogue/Chambre1.png"); 
   d2 = loadImage("assets/Dialogue/Chambre2.png");
