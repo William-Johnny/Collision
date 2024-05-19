@@ -325,7 +325,7 @@ function setup() {
   hero2 = loadImage('assets/Tuiles/Personnages/Garçon/d.png');
   hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
 
-  heroWithDoll = loadImage('assets/Tuiles/Personnages/Garçon/Avec poupée.png');
+  heroWithDoll = loadImage('assets/Tuiles/Personnages/Garçon/HeroWithDoll.png');
   hero5 = loadImage('assets/Tuiles/Personnages/Garçon/dollg.png');
   hero6 = loadImage('assets/Tuiles/Personnages/Garçon/dolld.png');
   hero7 = loadImage('assets/Tuiles/Personnages/Garçon/dollb.png');
