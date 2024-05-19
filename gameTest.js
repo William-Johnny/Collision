@@ -283,7 +283,7 @@ function preload(){
   doll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/doll.png");
   d1 = loadImage("assets/Dialogue/Chambre1.png"); 
   d2 = loadImage("assets/Dialogue/Chambre2.png");
-  d3 = loadImage("assets/Dialogue/J'ai oublié quelque chose.png");
+  d3 = loadImage("assets/Dialogue/forgot.png");
   loadingScreen1 = loadImage("assets/Tuiles/1.png"); 
   ding = loadSound('assets/hotel-bell-ding-1-174457.mp3');
   room = loadImage("assets/Tuiles/Meuble/Chambre/Vue\ de\ haut/Vue\ de\ haut.png ");
