@@ -379,11 +379,11 @@ function setup() {
 
   video = createVideo('assets/Darvoza.mp4');
 
-  ventVideo = createVideo('assets/Cinématique/conduit/Vidéo/short conduit.mov');
+  ventVideo = createVideo('assets/Cinematique/conduit/Video/short conduit.mov');
 
-  fightVideo = createVideo('assets/Cinématique/Bagarre/ciné\ bagarre.mp4');
+  fightVideo = createVideo('assets/Cinematique/Bagarre/cine\ bagarre.mp4');
 
-  doorVideo = createVideo('assets/Cinématique/Porte\ salon/short\ porte\ coffre.mov');
+  doorVideo = createVideo('assets/Cinematique/Porte\ salon/short\ porte\ coffre.mov');
   
   // Hide the video element
   video.hide();
