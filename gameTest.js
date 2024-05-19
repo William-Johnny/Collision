@@ -308,27 +308,27 @@ function setup() {
   canvas = createCanvas(canvasWidth,canvasHeight);
   canvas.position(0,0);
 
-  myHeroUp.push(loadImage('assets/Tuiles/Personnages/Garçon/0_U.png'));
-  myHeroUp.push(loadImage('assets/Tuiles/Personnages/Garçon/1_U.png')); 
+  myHeroUp.push(loadImage('assets/Tuiles/Personnages/Boy/0_U.png'));
+  myHeroUp.push(loadImage('assets/Tuiles/Personnages/Boy/1_U.png')); 
 
-  myHeroDown.push(loadImage('assets/Tuiles/Personnages/Garçon/0_D.png'));
-  myHeroDown.push(loadImage('assets/Tuiles/Personnages/Garçon/1_D.png')); 
+  myHeroDown.push(loadImage('assets/Tuiles/Personnages/Boy/0_D.png'));
+  myHeroDown.push(loadImage('assets/Tuiles/Personnages/Boy/1_D.png')); 
 
-  myHeroLeft.push(loadImage('assets/Tuiles/Personnages/Garçon/0_L.png'));
-  myHeroLeft.push(loadImage('assets/Tuiles/Personnages/Garçon/1_L.png')); 
+  myHeroLeft.push(loadImage('assets/Tuiles/Personnages/Boy/0_L.png'));
+  myHeroLeft.push(loadImage('assets/Tuiles/Personnages/Boy/1_L.png')); 
 
-  myHeroRight.push(loadImage('assets/Tuiles/Personnages/Garçon/0_R.png'));
-  myHeroRight.push(loadImage('assets/Tuiles/Personnages/Garçon/1_R.png')); 
+  myHeroRight.push(loadImage('assets/Tuiles/Personnages/Boy/0_R.png'));
+  myHeroRight.push(loadImage('assets/Tuiles/Personnages/Boy/1_R.png')); 
 
-  hero0 = loadImage('assets/Tuiles/Personnages/Garçon/Vue dessus.png');
-  hero1 = loadImage('assets/Tuiles/Personnages/Garçon/g.png');
-  hero2 = loadImage('assets/Tuiles/Personnages/Garçon/d.png');
-  hero3 = loadImage('assets/Tuiles/Personnages/Garçon/b.png');
+  hero0 = loadImage('assets/Tuiles/Personnages/Boy/Vue dessus.png');
+  hero1 = loadImage('assets/Tuiles/Personnages/Boy/g.png');
+  hero2 = loadImage('assets/Tuiles/Personnages/Boy/d.png');
+  hero3 = loadImage('assets/Tuiles/Personnages/Boy/b.png');
 
-  heroWithDoll = loadImage('assets/Tuiles/Personnages/Garçon/HeroWithDoll.png');
-  hero5 = loadImage('assets/Tuiles/Personnages/Garçon/dollg.png');
-  hero6 = loadImage('assets/Tuiles/Personnages/Garçon/dolld.png');
-  hero7 = loadImage('assets/Tuiles/Personnages/Garçon/dollb.png');
+  heroWithDoll = loadImage('assets/Tuiles/Personnages/Boy/HeroWithDoll.png');
+  hero5 = loadImage('assets/Tuiles/Personnages/Boy/dollg.png');
+  hero6 = loadImage('assets/Tuiles/Personnages/Boy/dolld.png');
+  hero7 = loadImage('assets/Tuiles/Personnages/Boy/dollb.png');
   currentHeroImage=hero0;
 
   img2.resize(200,0);
