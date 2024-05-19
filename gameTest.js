@@ -142,6 +142,7 @@ let currentIndex=0;
 let ventAnimationBool=true;
 let doorVideoBool = false;
 let bathMapLoaded = false;
+let bathMapLoadedAfterProp = false;
 let towelMapLoaded = false;
 let propTurning = false;
 
@@ -396,6 +397,13 @@ function setup() {
   // }
 }
 
+function keyPressed() { 
+  if (currentFrontWorld===13) {
+    if (key === 'c') { 
+      bathMapLoadedAfterProp=true;
+    } 
+  }
+};
 /////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
   if (babaDisplayed===false) {
@@ -722,6 +730,11 @@ function draw() {
       if (bathMapLoaded===false) {
         currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
         bathMapLoaded=true;
+      }
+
+      if (bathMapLoadedAfterProp) {
+        currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
+        bathMapLoadedAfterProp===false;
       }
       
       animation(bathroomLight,15);
