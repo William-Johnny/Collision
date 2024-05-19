@@ -1,3 +1,12 @@
+let heroSpeed = 10;
+let myHeroRight = [];
+let myHeroLeft = [];
+let myHeroUp = [];
+let myHeroDown = [];
+let currentIndexHero = 0;
+let movementCounterHero = 0;
+let currentHeroImage = 0;
+
 let canvas
 
 let world1TileSize = 130
@@ -114,6 +123,28 @@ let canvasWidth = 0;
 let canvasResised = false;
 let canvasResised2 = false;
 let canvasResised3 = false;
+let screenResised = false;
+let sliderDrawn = false;
+
+let testMenu = false;
+let element = "";
+let sliderId = 0;
+
+let bathroomLight=[];
+let runningCat=[];
+let propAnimation=[];
+let mirrorFogLight=[];
+let mirrorNoFogLight=[];
+let currentImg = 0;
+let movementCounter=0;
+let currentIndex=0;
+
+let ventAnimationBool=true;
+let doorVideoBool = false;
+let bathMapLoaded = false;
+let towelMapLoaded = false;
+let propTurning = false;
+
 
 function setFullSreen(){
     var elem = document.getElementsByTagName("body")[0];
@@ -123,19 +154,93 @@ function setFullSreen(){
 }
 
 document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
-  setFullSreen();
-  if (canvasResised2===false) {
-    setTimeout(() => {
-      d1.resize(canvasWidth,0);
-      d2.resize(canvasWidth,0);
-      d3.resize(canvasWidth,0);
-      canvasHeight = windowHeight;
-      canvasWidth = windowWidth;
-      resizeCanvas(canvasWidth, canvasHeight);
-      canvasResised2=true;
-    }, 500);
+  let mouseLifted = JSON.parse(localStorage.getItem("mouseLifted"));
+  if (typeof mouseLifted !== 'boolean') {
+    if (screenResised===false) {
+      setFullSreen();
+      if (canvasResised2===false) {
+        setTimeout(() => {
+          d1.resize(canvasWidth,0);
+          d2.resize(canvasWidth,0);
+          d3.resize(canvasWidth,0);
+          canvasHeight = windowHeight;
+          canvasWidth = windowWidth;
+          resizeCanvas(canvasWidth, canvasHeight);
+          canvasResised2=true;
+        }, 500);
+      }
+      screenResised=true;
+      localStorage.setItem("mouseLifted", JSON.stringify(true));
+    }
+  }else{
+    if (screenResised===false) {
+      setFullSreen();
+      if (canvasResised2===false) {
+        setTimeout(() => {
+          d1.resize(canvasWidth,0);
+          d2.resize(canvasWidth,0);
+          d3.resize(canvasWidth,0);
+          canvasHeight = windowHeight;
+          canvasWidth = windowWidth;
+          resizeCanvas(canvasWidth-160, canvasHeight);
+          canvas.position(160,0);
+          canvasResised2=true;
+        }, 500);
+      }
+      screenResised=true;
+    }
   }
+  
+  
 });
+
+
+
+// // this class describes the properties of a single particle.
+// class Particle {
+//   // setting the co-ordinates, radius and the
+//   // speed of a particle in both the co-ordinates axes.
+//     constructor(){
+//       this.x = random(0,width);
+//       this.y = random(0,height);
+//       this.r = random(1,8);
+//       this.xSpeed = random(-2,2);
+//       this.ySpeed = random(-1,1.5);
+//     }
+  
+//   // creation of a particle.
+//     createParticle() {
+//       noStroke();
+//       fill('rgba(200,169,169,0.5)');
+//       circle(this.x,this.y,this.r);
+//     }
+  
+//   // setting the particle in motion.
+//     moveParticle() {
+//       if(this.x < 0 || this.x > width)
+//         this.xSpeed*=-1;
+//       if(this.y < 0 || this.y > height)
+//         this.ySpeed*=-1;
+//       this.x+=this.xSpeed;
+//       this.y+=this.ySpeed;
+//     }
+  
+//   // this function creates the connections(lines)
+//   // between particles which are less than a certain distance apart
+//     joinParticles(particles) {
+//       particles.forEach(element =>{
+//         let dis = dist(this.x,this.y,element.x,element.y);
+//         if(dis<85) {
+//           //stroke('rgba(255,255,255,0.04)');
+//           line(this.x,this.y,element.x,element.y);
+//         }
+//       });
+//     }
+// }
+  
+//   // an array to add multiple particles
+//   let particles = [];
+  
 
 function preload(){
   img2 = loadImage('assets/Subject.png');
@@ -147,15 +252,16 @@ function preload(){
   song = loadSound('assets/The Spooky House of Shady Lane.m4a');
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
-  bg = loadImage('assets/Tuiles/Meuble/Salle de bain/Vue de haut/Pièce.png');
+  // bathroom1 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
+  // bathroom2 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut2.png');
   bg2 = loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/Cuisine.png');
   digicode = loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/Digicode.png ');
   letter = loadImage('assets/Lettre.png ');
   fog = loadImage('assets/fog.png');
-  towel = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/1.png')
-  towel2 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/2.png')
-  towel3 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/3.png')
-  mirror = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Vue\ 2.png')
+  towel = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/1.png');
+  towel2 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/2.png');
+  towel3 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/3.png');
+  
   pin = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Epingle.png')
   salon = loadImage('assets/salon haut.png');
   porteBlinde = loadImage("assets/mur2.png"); 
@@ -179,18 +285,20 @@ function preload(){
   d2 = loadImage("assets/Dialogue/Chambre2.png");
   d3 = loadImage("assets/Dialogue/J'ai oublié quelque chose.png");
   loadingScreen1 = loadImage("assets/Tuiles/1.png"); 
-  lightFog = loadImage("assets/lightFog.png");
   ding = loadSound('assets/hotel-bell-ding-1-174457.mp3');
-  vent1 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/1.png");
-  vent2 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/2.png");
-  vent3 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/3.png");
-  vent4 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/4.png");
-  vent5 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/5.png");
   room = loadImage("assets/Tuiles/Meuble/Chambre/Vue\ de\ haut/Vue\ de\ haut.png ");
   biblio = loadImage("assets/Tuiles/Meuble/Chambre/Vue point and click/Vue biblio.png ");
-  prop1 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation1.png");
-  prop2 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation2.png");
-  prop3 = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation3.png");
+  
+  smoke1 = loadImage("assets/smoke/1.png");
+  smoke2 = loadImage("assets/smoke/2.png");
+  smoke3 = loadImage("assets/smoke/3.png");
+  smoke4 = loadImage("assets/smoke/4.png");
+  smoke5 = loadImage("assets/smoke/5.png");
+  smoke6 = loadImage("assets/smoke/6.png");
+  smoke7 = loadImage("assets/smoke/7.png");
+
+  ventTest = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/ventTest.gif');
+  vent = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/1.png");
 }
 
 function setup() {
@@ -199,7 +307,18 @@ function setup() {
   canvasWidth = windowWidth;
   canvas = createCanvas(canvasWidth,canvasHeight);
   canvas.position(0,0);
-  //let canvas = createCanvas(windowWidth, windowHeight);
+
+  myHeroUp.push(loadImage('assets/Tuiles/Personnages/Garçon/0_U.png'));
+  myHeroUp.push(loadImage('assets/Tuiles/Personnages/Garçon/1_U.png')); 
+
+  myHeroDown.push(loadImage('assets/Tuiles/Personnages/Garçon/0_D.png'));
+  myHeroDown.push(loadImage('assets/Tuiles/Personnages/Garçon/1_D.png')); 
+
+  myHeroLeft.push(loadImage('assets/Tuiles/Personnages/Garçon/0_L.png'));
+  myHeroLeft.push(loadImage('assets/Tuiles/Personnages/Garçon/1_L.png')); 
+
+  myHeroRight.push(loadImage('assets/Tuiles/Personnages/Garçon/0_R.png'));
+  myHeroRight.push(loadImage('assets/Tuiles/Personnages/Garçon/1_R.png')); 
 
   hero0 = loadImage('assets/Tuiles/Personnages/Garçon/Vue dessus.png');
   hero1 = loadImage('assets/Tuiles/Personnages/Garçon/g.png');
@@ -219,6 +338,22 @@ function setup() {
   d1.resize(canvasWidth,0);
   d2.resize(canvasWidth,0);
   d3.resize(canvasWidth,0);
+
+  bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png'));
+  bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut2.png')); 
+
+  mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buée/Lavabo/Lavabo-.png'));
+  mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buée/Lavabo/Lavabo+.png')); 
+
+  mirrorNoFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Sans\ buée/Lavabo/Lavabo-.png'));
+  mirrorNoFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Sans\ buée/Lavabo/Lavabo+.png')); 
+
+  runningCat.push(loadImage('assets/Tuiles/Personnages/Chat/Animation/Chat\ qui\ court1.png'));
+  runningCat.push(loadImage('assets/Tuiles/Personnages/Chat/Animation/Chat\ qui\ court2.png')); 
+
+  propAnimation.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation1.png'));
+  propAnimation.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation2.png')); 
+  propAnimation.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation3.png')); 
 
   fade = 1
   let worldSave = JSON.parse(localStorage.getItem("worldSave"));
@@ -243,9 +378,22 @@ function setup() {
   //console.log(frontSave);
 
   video = createVideo('assets/Darvoza.mp4');
+
+  ventVideo = createVideo('assets/Cinématique/conduit/Vidéo/short conduit.mov');
+
+  fightVideo = createVideo('assets/Cinématique/Bagarre/ciné\ bagarre.mp4');
+
+  doorVideo = createVideo('assets/Cinématique/Porte\ salon/short\ porte\ coffre.mov');
   
   // Hide the video element
   video.hide();
+  ventVideo.hide();
+  fightVideo.hide();
+  doorVideo.hide();
+
+  // for(let i = 0;i<width/10;i++){
+  //   particles.push(new Particle());
+  // }
 }
 
 /////////////////////////////////////////////////////   MOVEMENTS
@@ -253,38 +401,86 @@ const checkKeys = (currentMap)=>{
   if (babaDisplayed===false) {
     if (currentFrontWorld===1 || currentFrontWorld>8 && currentFrontWorld!=10) {
       if (keyIsDown(LEFT_ARROW)) {
-        currentHeroImage=hero1;
-        heroX -= 20;
+        movementCounterHero += 1;
+        
+        heroX -= heroSpeed;
         if (checkCollision(collision,world1CollisionTileSize)) {
-          heroX += 20;
-        } 
+          heroX += heroSpeed;
+          currentHeroImage = hero1;
+        }else{
+          if (movementCounterHero >= 35 / heroSpeed){
+            currentIndexHero += 1;
+            if (currentIndexHero === myHeroLeft.length){
+                currentIndexHero = 0;
+            }
+            currentHeroImage = myHeroLeft[currentIndexHero];
+            movementCounterHero = 0;
+          }
+        }
         canDisplayDialogue=false;
+
+        
       }
     
       if (keyIsDown(RIGHT_ARROW)) {
-        currentHeroImage=hero2;
-        heroX += 20;
+        movementCounterHero += 1;
+        
+        heroX += heroSpeed;
         if (checkCollision(collision,world1CollisionTileSize)) {
-          heroX -= 20;
-        } 
+          heroX -= heroSpeed;
+          currentHeroImage = hero2;
+        }else{
+          if (movementCounterHero >= 35 / heroSpeed){
+            currentIndexHero += 1;
+            if (currentIndexHero === myHeroRight.length){
+                currentIndexHero = 0;
+            }
+            currentHeroImage = myHeroRight[currentIndexHero];
+            movementCounterHero = 0;
+          }
+        }
         canDisplayDialogue=false;
+
+        
       }
       
       if (keyIsDown(UP_ARROW)) {
-        currentHeroImage=hero0;
-        heroY -= 20;
+        movementCounterHero += 1;
+        heroY -= heroSpeed;
         if (checkCollision(collision,world1CollisionTileSize)) {
-          heroY += 20;
-        } 
+          heroY += heroSpeed;
+          currentHeroImage = hero0;
+        }else{
+          if (movementCounterHero >= 35 / heroSpeed){
+            currentIndexHero += 1;
+            if (currentIndexHero === myHeroUp.length){
+                currentIndexHero = 0;
+            }
+            currentHeroImage = myHeroUp[currentIndexHero];
+            movementCounterHero = 0;
+          }
+        }
         canDisplayDialogue=false;
+
+        
       }
     
       if (keyIsDown(DOWN_ARROW)) {
-        currentHeroImage=hero3;
-        heroY += 20;
+        movementCounterHero += 1;
+        heroY += heroSpeed;
         if (checkCollision(collision,world1CollisionTileSize)) {
-          heroY -= 20;
-        } 
+          heroY -= heroSpeed;
+          currentHeroImage = hero3;
+        }else{
+          if (movementCounterHero >= 35 / heroSpeed){
+            currentIndexHero += 1;
+            if (currentIndexHero === myHeroDown.length){
+                currentIndexHero = 0;
+            }
+            currentHeroImage = myHeroDown[currentIndexHero];
+            movementCounterHero = 0;
+          }
+        }
         canDisplayDialogue=false;
       }
     }else{
@@ -354,7 +550,10 @@ let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
 };
 
 function playSound(){
-  song.play();
+  setTimeout(() => {
+    song.play();
+  }, 500);
+  
   button.remove();
   play=true;
 }
@@ -381,7 +580,7 @@ function mouseClicked() {
   if (currentFrontWorld === 12) {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 3; j++) {
-            if (pointIsInObjective((j * w + j * 20) + 565, (i * h + i * 15) + 370, mouseX, mouseY, w, h)) {
+            if (pointIsInObjective((j * w + j * 40) + 565, (i * h + i * 40) + 370, mouseX, mouseY, w, h)) {
                 if (i === 3 && j === 0) {
                     res += "*";
                 } else if (i === 3 && j === 1) {
@@ -391,7 +590,6 @@ function mouseClicked() {
                 } else {
                     res += (i * 3) + j + 1;
                 }
-                console.log("ok");
             }
         }
     }
@@ -416,9 +614,9 @@ function gameOver() {
   textSize(100);
   textAlign(CENTER);
   textFont(fontRegular);
-  text("GAME OVER",windowWidth/2,windowHeight/2);
+  text("GAME OVER",windowWidth/2-160,windowHeight/2);
   gameOverBool=true;
-  localStorage.setItem("save", JSON.stringify(3));
+  //localStorage.setItem("save", JSON.stringify(3));
   // NGbutton = createButton('New Game ?');
   // NGbutton.position(width/2,height/2+50);
   // NGbutton.mousePressed(clearLocalStorage());
@@ -431,7 +629,7 @@ function won() {
   textSize(100);
   textAlign(CENTER);
   textFont(fontRegular);
-  text("YOU WON",width/2,height/2);
+  text("YOU WON",windowWidth/2-160,height/2);
   gameOverBool=true;
 }
 
@@ -444,6 +642,20 @@ function decreaseHealth(amount) {
   if (health < 0) {
     health = 0;
     won();
+  }
+}
+
+function animation(animationArray, fps) {
+  movementCounter += 1;
+  if (movementCounter >= fps) {
+    currentIndex += 1;
+    if (currentIndex === animationArray.length) {
+      currentIndex = 0;
+    }
+    currentImg = animationArray[currentIndex];
+    //console.log(currentImg);
+    movementCounter = 0;
+    //console.log(currentBathroomImg);
   }
 }
 
@@ -494,22 +706,26 @@ function draw() {
     }
     canvas.position(160,0);
   }
-  // if (save===3) {
-  //   canvasWidth = windowWidth;
-  //   if (canvasResised3===false) {
-  //     resizeCanvas(canvasWidth, windowHeight);
-  //     canvasResised3=true;
-  //   }
-  //   canvas.position(0,0);
-  // }
+  
   if (gameOverBool===false) {
     if (currentFrontWorld===1 && save===2) {
       localStorage.setItem("frontSave", JSON.stringify(1));
       background(room);
+      // for(let i = 0;i<particles.length;i++) {
+      //   particles[i].createParticle();
+      //   particles[i].moveParticle();
+      //   particles[i].joinParticles(particles.slice(i));
+      // }
     }
 
     if (currentFrontWorld===50) {
-      background(bg);
+      if (bathMapLoaded===false) {
+        currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
+        bathMapLoaded=true;
+      }
+      
+      animation(bathroomLight,15);
+      background(currentImg);
     }
 
     if (currentFrontWorld===5 && bool) {
@@ -541,10 +757,6 @@ function draw() {
     
     if (currentFrontWorld===13 && bool) {
       background(towel);
-      fogImg = JSON.parse(localStorage.getItem("fogImg"));
-      if (typeof fogImg !== 'boolean') {
-        image(lightFog,0,0,canvasWidth,canvasHeight)
-      }
     }
     //console.log(dollFound);
     if (currentFrontWorld===28 && bool && dollFound!==true) {
@@ -555,14 +767,13 @@ function draw() {
     
     let pinFound = JSON.parse(localStorage.getItem("pinFound"));
     fogImg = JSON.parse(localStorage.getItem("fogImg"));
-    if (currentFrontWorld===14 && bool) {
-      background(mirror);
-      if (pinFound!==true && typeof fogImg === 'boolean') {
-        image(pin,windowWidth/2+300,windowHeight/2+25,100,100);
-      }
-      if (typeof fogImg !== 'boolean') {
-        image(fog,0,0,canvasWidth,canvasHeight);
-      }
+    if (currentFrontWorld===14 && bool && typeof fogImg !== 'boolean') {
+      animation(mirrorFogLight,15);
+      background(currentImg);
+    }else if (currentFrontWorld===14 && bool && pinFound!==true && typeof fogImg === 'boolean') {
+      animation(mirrorNoFogLight,15);
+      background(currentImg);
+      image(pin,windowWidth/2+300,windowHeight/2+25,100,100);
     }
   
     if (currentFrontWorld===15 && redLight) {
@@ -575,7 +786,7 @@ function draw() {
       imageMode(CENTER);
       image(roue, 0, 0); 
       pop();
-      if (canDisplayPcDialogueLRDoor){
+      if (canDisplayPcDialogueLRDoor && dollFound===false){
         image(d3,-40,canvasHeight-120);
         setTimeout(() => {
           canDisplayPcDialogueLRDoor=false
@@ -590,16 +801,16 @@ function draw() {
   
   ///////////////////////////////////////////////////// OPENING
   if (save<1 && play) {
-    video.play();
-    image(video, 0, 0, canvasWidth, canvasHeight);
     setTimeout(() => {
-      localStorage.setItem("save", JSON.stringify(1));
-    }, 10000);
+      video.play();
+      image(video, 0, 0, canvasWidth, canvasHeight);
+      setTimeout(() => {
+        localStorage.setItem("save", JSON.stringify(1));
+      }, 10000);
+    }, 500);
   }
 
   if (save===1) {
-
-    console.log(canvasHeight);
     canvasHeight = windowHeight;
     canvasWidth = windowWidth;
 
@@ -613,6 +824,13 @@ function draw() {
     fill(0, 200, 0);
     let progressWidth = map(progress, 0, 100, 0, 200);
     rect(100, 100, progressWidth, 20);
+
+    animation(runningCat,13);
+    //console.log(currentImg);
+    if (currentImg!==0) {
+      image(currentImg,canvasWidth/2+100,canvasHeight/2,200,100)
+    }
+    
 
     if (progress < 100) {
       progress += 0.1;
@@ -656,15 +874,37 @@ function draw() {
         if (babaDisplayed && roundRandomNbforbaba===0) {
           if (currentHeroImage!==hero6) {
             if (health>50) {
-              i+=10;
+              i+=5;
             }else if(health<=50){
-              i+=15;
+              i+=10;
             }else if (health<=25) {
-              i+=20;
+              i+=15;
             }
             
             babaX=9*world1TileSize-i;
             babaY=3*world1TileSize+20;
+            // setTimeout(() => {
+            //   image(smoke1,babaX, babaY, babaWidth, babaHeight)
+            // }, 100);
+            // setTimeout(() => {
+            //   image(smoke2,babaX, babaY, babaWidth, babaHeight)
+            // }, 200);
+            // setTimeout(() => {
+            //   image(smoke3,babaX, babaY, babaWidth, babaHeight)
+            // }, 300);
+            // setTimeout(() => {
+            //   image(smoke4,babaX, babaY, babaWidth, babaHeight)
+            // }, 400);
+            // setTimeout(() => {
+            //   image(smoke5,babaX, babaY, babaWidth, babaHeight)
+            // }, 500);
+            // setTimeout(() => {
+            //   image(smoke6,babaX, babaY, babaWidth, babaHeight)
+            // }, 600);
+            // setTimeout(() => {
+            //   image(smoke7,babaX, babaY, babaWidth, babaHeight)
+            // }, 700);
+            
             image(baba, babaX, babaY, babaWidth, babaHeight);
             if (babaX<=heroX) {
               babaX=0;
@@ -687,11 +927,11 @@ function draw() {
         }else if (babaDisplayed && roundRandomNbforbaba===1) {
           if (currentHeroImage!==hero7) {
             if (health>50) {
-              i+=10;
+              i+=5;
             }else if(health<=50){
-              i+=15;
+              i+=10;
             }else if (health<=25) {
-              i+=20;
+              i+=15;
             }
             babaX=5*world1TileSize+20;
             babaY=6*world1TileSize-i;
@@ -716,11 +956,11 @@ function draw() {
         }else if (babaDisplayed && roundRandomNbforbaba===2){
           if (currentHeroImage!==hero5) {
             if (health>50) {
-              i+=10;
+              i+=5;
             }else if(health<=50){
-              i+=15;
+              i+=10;
             }else if (health<=25) {
-              i+=20;
+              i+=15;
             }
             babaX=1*world1TileSize+i;
             babaY=3*world1TileSize+20;
@@ -751,16 +991,6 @@ function draw() {
       //   tileDictionnaries[currentFrontWorld],
       //   worldsTileSizes[currentFrontWorld]);
       // }
-      let fogImg = JSON.parse(localStorage.getItem("fogImg"));
-      if (typeof fogImg === 'boolean') {
-        if (currentFrontWorld===50 && fogImg) {
-          image(fog,0,0,canvasWidth,canvasHeight);
-        }
-      }else{
-        if (currentFrontWorld===50) {
-          image(fog,0,0,canvasWidth,canvasHeight);
-        }
-      }
       
       
     }
@@ -852,11 +1082,8 @@ function draw() {
         if (pointIsInObjective(windowWidth/2-75,windowHeight/2, mouseX,mouseY, 175,200)) {
           bool=false;
           background(towel2);
-          let fogImg = JSON.parse(localStorage.getItem("fogImg"));
-          image(lightFog,0,0,canvasWidth,canvasHeight)
           setTimeout(() => {
             background(towel3);
-            image(lightFog,0,0,canvasWidth,canvasHeight)
           }, 100);
           towelOpened=true;
         }
@@ -869,18 +1096,26 @@ function draw() {
         if (pointIsInObjective(windowWidth/2,windowHeight/2+110, mouseX,mouseY, 50, 50)) {
           localStorage.setItem("fogImg", JSON.stringify(false));
           background(towel3);
-          image(prop1,canvasWidth-275,25,125,120);
-          image(prop2,canvasWidth-275,25,125,120);
-          image(prop3,canvasWidth-275,25,125,120);
+          propTurning = true;
         }
       }
+    }
+    if (propTurning) {
+      if (towelMapLoaded===false) {
+        currentImg = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation1.png");
+        towelMapLoaded=true;
+      }
+      
+      animation(propAnimation,5)
+      image(currentImg,canvasWidth/2+320,-32,240,240);
     }
   }else if (currentFrontWorld===14) {
     if (mouseIsPressed === true) {
       if (pointIsInObjective(windowWidth/2+300,windowHeight/2+25,mouseX,mouseY, 100,100)) {
         localStorage.setItem("pinFound", JSON.stringify(true));
         bool=false;
-        image(mirror,0,0,canvasWidth,canvasHeight)
+        animation(mirrorNoFogLight,15);
+        background(currentImg);
       }
     }
   }else if (currentFrontWorld===15) {
@@ -925,19 +1160,28 @@ function draw() {
           rotationCount+=0.25;
           angle=0;
           if (rotationCount===3) {
-            background(green);
             redLight=false;
+            doorVideoBool = true;
+            // setTimeout(() => {
+            //   fightVideo.play();
+            //   image(fightVideo, 0, 0, canvasWidth, canvasHeight);
+            // }, 4000);
+            
             setTimeout(() => {
               localStorage.setItem("frontSave", JSON.stringify(21));
               localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
 
               currentFrontWorld=21;
               collision=world5Collision;
-            }, 1000);
+            }, 4000);
             
           }
         }
       }
+    }
+    if (doorVideoBool) {
+      doorVideo.play();
+      image(doorVideo, 0, 0, canvasWidth, canvasHeight);
     }
   }else if (currentFrontWorld===25) {
     if (mouseIsPressed === true) {
@@ -1003,9 +1247,9 @@ function draw() {
     
   }else if (currentFrontWorld===60) {
     if (bool) {
-      background(vent1);
+      background(vent);
     }
-    if (pinClicked) {
+    if (pinClicked && ventAnimationBool) {
       image(pin,pinX, pinY,100,100)
       // Is mouse over object
       if (mouseX > pinX && mouseX < pinX + keyWidth && mouseY > pinY && mouseY < pinY + keyHeight) {
@@ -1032,20 +1276,9 @@ function draw() {
 
         if (pointIsInObjective(100,10,pinX,pinY,480,550) && runAnim){
           bool=false;
-          setTimeout(() => {
-            console.log("a");
-            image(vent2,0,0,windowWidth,windowHeight);
-          }, 500);
-          setTimeout(() => {
-            console.log("b");
-            image(vent3,0,0,windowWidth,windowHeight);
-          }, 1000);
-          setTimeout(() => {
-            image(vent4,0,0,windowWidth,windowHeight);
-          }, 1500);
-          setTimeout(() => {
-            image(vent5,0,0,windowWidth,windowHeight);
-          }, 2000);
+          //image(ventTest, 0, 0, canvasWidth, canvasHeight);
+          ventVideo.play();
+          image(ventVideo, 0, 0, canvasWidth, canvasHeight);
           setTimeout(() => {
             console.log("c");
             localStorage.setItem("frontSave", JSON.stringify(9));
@@ -1056,14 +1289,11 @@ function draw() {
             localStorage.setItem("pinFound", JSON.stringify(false));
             bool = true;
           }, 4000);
-          runAnim=false;
+          //runAnim=false;
         }
       }
     }
   }
-
-  let brightness = JSON.parse(localStorage.getItem("brightness"));
-  adjustBrightness(brightness);
 
   if (res==="7452") {
     localStorage.setItem("passwordFound", JSON.stringify(true));
@@ -1089,62 +1319,34 @@ function draw() {
     image(d2,-40,canvasHeight-60);
     testplaySound();
   }
+
+  if (testMenu) {
+    image(menu,0,0,canvasWidth,canvasHeight+50);
+    if (sliderDrawn===false) {
+      let slider1;
+      //console.log("slider");
+      slider1 = createSlider(-100, 100, 0);
+      slider1.position(canvasWidth/2, canvasHeight/2+50);
+      slider1.size(200);
+      slider1.id("slider1");
+      element = document.getElementById("slider1");
+      sliderDrawn=true;
+    }
+    let brightness = slider1.value;
+    adjustBrightness(parseInt(brightness));
+    localStorage.setItem("brightness", JSON.stringify(brightness));
+  }
+
+  let brightness = JSON.parse(localStorage.getItem("brightness"));
+  if (brightness !== null) {
+    adjustBrightness(parseInt(brightness));
+  }
+  
   
   checkKeys(currentWorld);
   //fill("red");
-  //rect(canvasWidth/2+100,canvasHeight/2-200, 200,250)
+  //rect(canvasWidth/2-250, canvasHeight-200, 500,200)
 }
-
-let menuCanvas = () => {
-  if (menuDisplayed) {
-    let s3 = function( sketch ) {
-      let bg;
-      let slider1;
-      let slider2;
-      let canvasWidth = 661;
-      let canvasHeight= 483; 
-  
-      sketch.setup=function() {
-        bg = loadImage('assets/Tuiles/Menu.png');
-        createCanvas(canvasWidth, canvasHeight);
-       
-        slider1 = createSlider(0, 255);
-        slider1.position(canvasWidth+100, canvasHeight-100);
-        slider1.size(80);
-        // slider1.style("-webkit-appearance", "none"); 
-        // slider1.style("-moz-range-track", "red"); 
-  
-        slider2 = createSlider(-100, 100, 0);
-        slider2.position(canvasWidth+100, canvasHeight+50);
-        slider2.size(80);
-
-      }
-
-      function adjustBrightness(adjustment) {
-        loadPixels();
-        for (let i = 0; i < pixels.length; i += 4) {
-          pixels[i] += adjustment; // Red
-          pixels[i + 1] += adjustment; // Green
-          pixels[i + 2] += adjustment; // Blue
-        }
-        updatePixels();
-      }
-      
-      
-  
-      sketch.draw=function() {
-        background(bg);
-        let brightness = slider2.value();
-        adjustBrightness(brightness);
-        localStorage.setItem("brightness", JSON.stringify(brightness));
-      }
-    };
-    new p5(s3);
-  }else{
-    location.reload();
-  }
-
-};
 
 let inventoryCanvas = () => {
   let s2 = function( sketch ) {
@@ -1155,31 +1357,10 @@ let inventoryCanvas = () => {
     }
   
     sketch.setup = function() {
-      let canvas2 = sketch.createCanvas(160, 693);
+      let canvas2 = sketch.createCanvas(160, windowHeight);
       canvas2.id('inventory');
-      canvas2.position(0,100);
+      canvas2.position(0,0);
     }
-  
-    sketch.mouseClicked = function() {
-    if (!menuDisplayed) {
-      if ((mouseX>-360) && (mouseX<-360+120)){
-        if ((mouseY>-50) && (mouseY<-50+50)){
-          menuDisplayed = true;
-          menuCanvas();
-          return menuDisplayed;
-        }    
-      }
-      
-    }else if (menuDisplayed) {
-      if ((mouseX>-360) && (mouseX<-360+120)){
-        if ((mouseY>-50) && (mouseY<-50+50)){
-          menuDisplayed = false;
-          menuCanvas();
-          return menuDisplayed;
-        }    
-      }
-    }
-    };
 
     let pointIsInObjective = function(Nb1,Nb2,x,y,w,h){
       if ((x>Nb1) && (x<Nb1+w)){
@@ -1190,28 +1371,56 @@ let inventoryCanvas = () => {
         return false;
      
     };
+
+    sketch.mouseClicked=function() {
+      console.log("ok");
+      if (!testMenu) {
+        if(pointIsInObjective(10, 100,sketch.mouseX,sketch.mouseY, 130,50)){
+          console.log("ok");
+          testMenu = true;
+        }
+        
+      }else if (testMenu) {
+        console.log("test");
+        if(pointIsInObjective(canvasWidth/2-250, canvasHeight-200,  mouseX,mouseY, 500,200)){
+          console.log("lol");
+          element.remove();
+          testMenu = false;
+          sliderDrawn=false;
+        }
+      }
+    }
+
+    document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
+      setFullSreen();
+      if (canvasResised3===false) {
+        setTimeout(() => {
+          canvasHeight = windowHeight;
+          sketch.resizeCanvas(160, canvasHeight);
+          canvasResised3=true;
+        }, 500);
+      }
+      screenResised=true;
+    });
     
     localStorage.setItem("keyImgClicked", JSON.stringify(false));
     localStorage.setItem("pinImgClicked", JSON.stringify(false));
     localStorage.setItem("keyFound", JSON.stringify(false));
     sketch.draw = function() {
-      if (gameOverBool) {
-        console.log("ok");
-      };
       sketch.background(100);
       sketch.imageMode(CORNER);
       sketch.image(inventory, 0, 0);
 
       if (sketch.mouseIsPressed===true && currentFrontWorld===7) {
         //console.log(sketch.mouseX,sketch.mouseY);
-        if (pointIsInObjective(30, 240,sketch.mouseX,sketch.mouseY,100,40)) {
+        if (pointIsInObjective(30, 470,sketch.mouseX,sketch.mouseY,100,40)) {
           localStorage.setItem("keyImgClicked", JSON.stringify(true));
         }
         
       }
       
       if (sketch.mouseIsPressed===true && currentFrontWorld===60) {
-        if (pointIsInObjective(30, 240,sketch.mouseX,sketch.mouseY,100,40)) {
+        if (pointIsInObjective(30, 470,sketch.mouseX,sketch.mouseY,100,40)) {
           localStorage.setItem("pinImgClicked", JSON.stringify(true));
         }
       }
@@ -1219,20 +1428,26 @@ let inventoryCanvas = () => {
       let keyFound = JSON.parse(localStorage.getItem("keyFound"));
       let keyImgClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
       if (keyFound && keyImgClicked===false) {
-        sketch.image(theKey,  30, 240,100,40);
+        sketch.image(theKey,  30, 470,100,40);
       }
       let pinFound = JSON.parse(localStorage.getItem("pinFound"));
       let pinImgClicked = JSON.parse(localStorage.getItem("pinImgClicked"));
 
       //console.log(pinFound,pinImgClicked);
       if (pinFound && pinImgClicked===false) {
-        sketch.image(pin,  15, 200);
+        sketch.image(pin,  15, 420);
       }
       let dollFound = JSON.parse(localStorage.getItem("dollFound"));
       if (dollFound) {
-        sketch.image(doll,  28, 210,100,100);
+        sketch.image(doll,  28, 440,100,100);
       }
-      //sketch.rect(30, 240,100,40);
+
+      if (gameOverBool) {
+        sketch.fill(0);
+        sketch.rect(0,0,160,windowHeight)
+      };
+      
+      //sketch.rect(565,370,90,99);
     }
   };
   
