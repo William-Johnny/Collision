@@ -343,10 +343,10 @@ function setup() {
   bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut2.png')); 
 
   mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buee/Lavabo/Lavabo-.png'));
-  mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buee/Lavabo/Lavabo+.png')); 
+  mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buee/Lavabo/LavaboPlus.png')); 
 
   mirrorNoFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Sans\ buee/Lavabo/Lavabo-.png'));
-  mirrorNoFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Sans\ buee/Lavabo/Lavabo+.png')); 
+  mirrorNoFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Sans\ buee/Lavabo/LavaboPlus.png')); 
 
   runningCat.push(loadImage('assets/Tuiles/Personnages/Chat/Animation/Chat\ qui\ court1.png'));
   runningCat.push(loadImage('assets/Tuiles/Personnages/Chat/Animation/Chat\ qui\ court2.png')); 
