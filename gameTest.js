@@ -74,8 +74,8 @@ var dragging = false; // Is the object being dragged?
 var rollover = false; // Is the mouse over the ellipse?
 
 // Location and size of key img when in use
-let x = 100;
-let y = 100;
+let x = 1200;
+let y = 600;
 let pinX = 10;
 let pinY = 20;
 let keyWidth = 100;
@@ -257,6 +257,7 @@ document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
   
 
 function preload(){
+  house  = loadImage("assets/Cinematique/debut\ et\ fin/debut/maison@4x.png");
   img2 = loadImage('assets/Subject.png');
   img3 = loadImage('assets/openBook.png');
   img4 = loadImage('assets/key.png');
@@ -427,6 +428,8 @@ function setup() {
   doorVideo = createVideo('assets/Cinematique/Porte\ salon/short\ porte\ coffre.mov');
 
   endCredits = createVideo('assets/Fin du jeu.mp4');
+
+  openingVideo = createVideo('assets/Cinematique/debut\ et\ fin/debut/cine\ debut.mp4');
   
   // Hide the video element
   video.hide();
@@ -434,6 +437,7 @@ function setup() {
   fightVideo.hide();
   doorVideo.hide();
   endCredits.hide();
+  openingVideo.hide();
 
   // for(let i = 0;i<width/10;i++){
   //   particles.push(new Particle());
@@ -759,7 +763,7 @@ function draw() {
   if (wonBool) {
     setTimeout(() => {
       endCredits.play();
-      image(endCredits, 0, 0, canvasWidth, canvasHeight);
+      image(endCredits, -80, 0, canvasWidth, canvasHeight);
     }, 5000);
   }
 
@@ -822,8 +826,15 @@ function draw() {
       }
 
       if (bathMapLoadedAfterProp) {
+        //console.log(currentImg);
         animation(bathroomLightNoFog,15);
-        background(currentImg);
+        if (currentImg.width!==128) {
+          background(currentImg);
+        }else{
+          currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut-.png');
+          background(currentImg);
+        }
+        
       }else{
         animation(bathroomLight,15);
         background(currentImg);
@@ -942,10 +953,15 @@ function draw() {
     if (progress < 100) {
       progress += 0.1;
     }else{
-      localStorage.setItem("save", JSON.stringify(2));
+      openingVideo.play();
+      image(openingVideo,0,0,canvasWidth,canvasHeight)
+      setTimeout(() => {
+        localStorage.setItem("save", JSON.stringify(2));
       
-      localStorage.setItem("collisionSave", JSON.stringify(world1Collision));
-      inventoryCanvas();
+        localStorage.setItem("collisionSave", JSON.stringify(world1Collision));
+        inventoryCanvas();
+      }, 25000);
+      
     }
 
   }
