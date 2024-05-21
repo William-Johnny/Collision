@@ -1,4 +1,4 @@
-let heroSpeed = 10;
+let heroSpeed = 8;
 let myHeroRight = [];
 let myHeroLeft = [];
 let myHeroUp = [];
@@ -99,6 +99,7 @@ let nbOfcollisionWithBaba=0;
 let cooldown = 5;
 
 let gameOverBool=false;
+let wonBool = false;
 
 let health = 100;
 
@@ -113,6 +114,7 @@ let progress = 0;
 let dollTaken = false;
 
 let canPlaySound = true;
+let canPlayVentSound = true;
 
 let video;
 
@@ -131,10 +133,14 @@ let element = "";
 let sliderId = 0;
 
 let bathroomLight=[];
+let bathroomLightNoFog=[];
+let candles = [];
+let candlesView1 = [];
 let runningCat=[];
 let propAnimation=[];
 let mirrorFogLight=[];
 let mirrorNoFogLight=[];
+let smokeAnimation=[];
 let currentImg = 0;
 let movementCounter=0;
 let currentIndex=0;
@@ -145,6 +151,13 @@ let bathMapLoaded = false;
 let bathMapLoadedAfterProp = false;
 let towelMapLoaded = false;
 let propTurning = false;
+
+let movementCounterOfOneTimeAnimation = 0;
+let currentIndexOfOneTimeAnimation = 0;
+let currentImgOfOneTimeAnimation = 0;
+let animationEnded = false; 
+let playFightVideo=true;
+let fightVideoEnded=false;
 
 
 function setFullSreen(){
@@ -251,6 +264,7 @@ function preload(){
   inventory = loadImage('assets/Tuiles/Inventaire/1.png');
   menu = loadImage('assets/Tuiles/Menu.png');
   song = loadSound('assets/The Spooky House of Shady Lane.m4a');
+  ventSound = loadSound('assets/Bruit-musique/ventilation\ sdb.mp3');
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
   // bathroom1 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
@@ -276,9 +290,22 @@ function preload(){
   mainKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/1.png ");
   secondaryKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 2/2.png ");
   kitchenWall = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 4/4.png "); 
+  
   cupboard1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/1.png "); 
   cupboard2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/2.png  "); 
   cupboard3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/3.png "); 
+
+  cupboard2_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/1.png "); 
+  cupboard2_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/2.png  "); 
+  cupboard2_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/3.png "); 
+
+  cupboard3_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasG/1.png "); 
+  cupboard3_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasG/2.png  "); 
+
+  cupboard4_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/1.png "); 
+  cupboard4_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/2.png  "); 
+  cupboard4_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/3.png "); 
+  
   roomWithDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/mur\ 1@4x.png"); 
   noDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/noDoll @4x.png"); 
   doll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/doll.png");
@@ -289,14 +316,6 @@ function preload(){
   ding = loadSound('assets/hotel-bell-ding-1-174457.mp3');
   room = loadImage("assets/Tuiles/Meuble/Chambre/Vue\ de\ haut/Vue\ de\ haut.png ");
   biblio = loadImage("assets/Tuiles/Meuble/Chambre/Vue point and click/Vue biblio.png ");
-  
-  smoke1 = loadImage("assets/smoke/1.png");
-  smoke2 = loadImage("assets/smoke/2.png");
-  smoke3 = loadImage("assets/smoke/3.png");
-  smoke4 = loadImage("assets/smoke/4.png");
-  smoke5 = loadImage("assets/smoke/5.png");
-  smoke6 = loadImage("assets/smoke/6.png");
-  smoke7 = loadImage("assets/smoke/7.png");
 
   ventTest = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/ventTest.gif');
   vent = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Aeration/1.png");
@@ -343,6 +362,19 @@ function setup() {
   bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png'));
   bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut2.png')); 
 
+  bathroomLightNoFog.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut-.png'));
+  bathroomLightNoFog.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut+.png')); 
+
+  candles.push(loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/bougies/1.png'));
+  candles.push(loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/bougies/2.png'));
+  candles.push(loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/bougies/3.png'));
+
+  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/1.png'));
+  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/2.png'));
+  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/3.png'));
+  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/4.png'));
+  
+
   mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buee/Lavabo/Lavabo-.png'));
   mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buee/Lavabo/LavaboPlus.png')); 
 
@@ -355,6 +387,14 @@ function setup() {
   propAnimation.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation1.png'));
   propAnimation.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation2.png')); 
   propAnimation.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation3.png')); 
+
+  smokeAnimation.push(loadImage('assets/smoke/1.png'));
+  smokeAnimation.push(loadImage('assets/smoke/2.png'));
+  smokeAnimation.push(loadImage('assets/smoke/3.png'));
+  smokeAnimation.push(loadImage('assets/smoke/4.png'));
+  smokeAnimation.push(loadImage('assets/smoke/5.png'));
+  smokeAnimation.push(loadImage('assets/smoke/6.png'));
+  smokeAnimation.push(loadImage('assets/smoke/7.png'));
 
   fade = 1
   let worldSave = JSON.parse(localStorage.getItem("worldSave"));
@@ -385,12 +425,15 @@ function setup() {
   fightVideo = createVideo('assets/Cinematique/Bagarre/cine\ bagarre.mp4');
 
   doorVideo = createVideo('assets/Cinematique/Porte\ salon/short\ porte\ coffre.mov');
+
+  endCredits = createVideo('assets/Fin du jeu.mp4');
   
   // Hide the video element
   video.hide();
   ventVideo.hide();
   fightVideo.hide();
   doorVideo.hide();
+  endCredits.hide();
 
   // for(let i = 0;i<width/10;i++){
   //   particles.push(new Particle());
@@ -399,7 +442,7 @@ function setup() {
 
 function keyPressed() { 
   if (currentFrontWorld===13) {
-    if (key === 'c') { 
+    if (key === 'p') { 
       bathMapLoadedAfterProp=true;
     } 
   }
@@ -416,7 +459,7 @@ const checkKeys = (currentMap)=>{
           heroX += heroSpeed;
           currentHeroImage = hero1;
         }else{
-          if (movementCounterHero >= 35 / heroSpeed){
+          if (movementCounterHero >= 50 / heroSpeed){
             currentIndexHero += 1;
             if (currentIndexHero === myHeroLeft.length){
                 currentIndexHero = 0;
@@ -438,7 +481,7 @@ const checkKeys = (currentMap)=>{
           heroX -= heroSpeed;
           currentHeroImage = hero2;
         }else{
-          if (movementCounterHero >= 35 / heroSpeed){
+          if (movementCounterHero >= 50 / heroSpeed){
             currentIndexHero += 1;
             if (currentIndexHero === myHeroRight.length){
                 currentIndexHero = 0;
@@ -459,7 +502,7 @@ const checkKeys = (currentMap)=>{
           heroY += heroSpeed;
           currentHeroImage = hero0;
         }else{
-          if (movementCounterHero >= 35 / heroSpeed){
+          if (movementCounterHero >= 50 / heroSpeed){
             currentIndexHero += 1;
             if (currentIndexHero === myHeroUp.length){
                 currentIndexHero = 0;
@@ -480,7 +523,7 @@ const checkKeys = (currentMap)=>{
           heroY -= heroSpeed;
           currentHeroImage = hero3;
         }else{
-          if (movementCounterHero >= 35 / heroSpeed){
+          if (movementCounterHero >= 50 / heroSpeed){
             currentIndexHero += 1;
             if (currentIndexHero === myHeroDown.length){
                 currentIndexHero = 0;
@@ -573,6 +616,13 @@ function testplaySound(){
   }
 }
 
+function ventplaySound() {
+  if (canPlayVentSound) {
+    ventSound.play();
+    canPlayVentSound=false; 
+  }
+}
+
 function adjustBrightness(adjustment) {
   loadPixels();
   for (let i = 0; i < pixels.length; i += 4) {
@@ -623,6 +673,10 @@ function gameOver() {
   textAlign(CENTER);
   textFont(fontRegular);
   text("GAME OVER",windowWidth/2-160,windowHeight/2);
+  // button = createButton('Try Again ?');
+  // button.center();
+  // button.mousePressed(location.reload);
+  // button.style('font-family', 'American Typewriter');
   gameOverBool=true;
   //localStorage.setItem("save", JSON.stringify(3));
   // NGbutton = createButton('New Game ?');
@@ -639,6 +693,8 @@ function won() {
   textFont(fontRegular);
   text("YOU WON",windowWidth/2-160,height/2);
   gameOverBool=true;
+  wonBool=true;
+  
 }
 
 let pinData = localStorage.setItem("pinFound", JSON.stringify(false));
@@ -667,12 +723,45 @@ function animation(animationArray, fps) {
   }
 }
 
+function oneTimeAnimation(animationArray, fps) {
+  
+  if (animationEnded) {
+    return; // Exit the function if the animation has ended
+  }
+
+  movementCounterOfOneTimeAnimation += 1;
+  if (movementCounterOfOneTimeAnimation >= fps) {
+    currentIndexOfOneTimeAnimation += 1;
+    if (currentIndexOfOneTimeAnimation === animationArray.length) {
+      animationEnded = true; // Set the flag to true when the animation reaches the end
+    } else {
+      currentImgOfOneTimeAnimation = animationArray[currentIndexOfOneTimeAnimation];
+    }
+    movementCounterOfOneTimeAnimation = 0;
+  }
+}
+
+function resetOneTimeAnimation() {
+  currentIndexOfOneTimeAnimation = 0;
+  movementCounterOfOneTimeAnimation = 0;
+  animationEnded = false;
+  currentImgOfOneTimeAnimation = undefined;
+}
+
+
 let dollFound = JSON.parse(localStorage.getItem("dollFound"));
 // Appelé en continue après le setup
 function draw() {
   imageMode(CORNER);
   //console.log(currentFrontWorld,currentWorld);
   checkCollision(collision,world1CollisionTileSize)
+
+  if (wonBool) {
+    setTimeout(() => {
+      endCredits.play();
+      image(endCredits, 0, 0, canvasWidth, canvasHeight);
+    }, 5000);
+  }
 
   if (cooldown > 0) {
     cooldown--;
@@ -733,12 +822,14 @@ function draw() {
       }
 
       if (bathMapLoadedAfterProp) {
-        currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
-        bathMapLoadedAfterProp===false;
+        animation(bathroomLightNoFog,15);
+        background(currentImg);
+      }else{
+        animation(bathroomLight,15);
+        background(currentImg);
       }
       
-      animation(bathroomLight,15);
-      background(currentImg);
+      
     }
 
     if (currentFrontWorld===5 && bool) {
@@ -760,6 +851,11 @@ function draw() {
     
     if (currentFrontWorld===25 && bool) {
       background(mainKitchenFurniture);
+      // animation(candlesView1,10);
+      // if (currentImg!==0) {
+      //   background(currentImg);
+      // }
+      
     }
     if (currentFrontWorld===27) {
       background(secondaryKitchenFurniture);
@@ -786,7 +882,7 @@ function draw() {
     }else if (currentFrontWorld===14 && bool && pinFound!==true && typeof fogImg === 'boolean') {
       animation(mirrorNoFogLight,15);
       background(currentImg);
-      image(pin,windowWidth/2+300,windowHeight/2+25,100,100);
+      image(pin,windowWidth/2+250,windowHeight/2+25,100,100);
     }
   
     if (currentFrontWorld===15 && redLight) {
@@ -799,16 +895,14 @@ function draw() {
       imageMode(CENTER);
       image(roue, 0, 0); 
       pop();
-      if (canDisplayPcDialogueLRDoor && dollFound===false){
-        image(d3,-40,canvasHeight-120);
-        setTimeout(() => {
-          canDisplayPcDialogueLRDoor=false
-        }, 2000);
-      }
     }
   
     if (currentFrontWorld===9) {
       background(bg2);
+      animation(candles,10);
+      if (currentImg!==0) {
+        image(currentImg,0,0,canvasWidth,canvasHeight);
+      }
     }
   }
   
@@ -857,7 +951,7 @@ function draw() {
   }
   ////////////////////////////////////////////////////////// 
 
-  ////////////////////////////////////////////////////////// DRAW WORLDS
+  ////////////////////////////////////////////////////////// DRAW HERO & BOSS FIGHT
   if (gameOverBool===false) {
     if (bool && save===2) {
       imageMode(CORNER);
@@ -871,21 +965,37 @@ function draw() {
 
       // console.log(5*world1TileSize);
       if (heroX<=740 && heroX>=650 && currentFrontWorld===21 && heroY>=420 && heroY<=500) {
-        babaDisplayed=true;
-        let barWidth = 200;
-        let barHeight = 20;
-        let xPos = (width - barWidth) / 2;
-        let yPos = height-64;
-        fill(255); // Couleur de fond de la barre
-        rect(xPos, yPos, barWidth, barHeight);
+        if (playFightVideo) {
+          fightVideo.play();
+          image(fightVideo, 0, 0, canvasWidth, canvasHeight);
+          setTimeout(() => {
+            playFightVideo=false;
+            fightVideoEnded=true;
+          }, 20000);
+        }
         
-        let healthWidth = map(health, 0, 100, 0, barWidth); // Calculer la largeur de la barre de vie en fonction de la santé actuelle
+
+        if (fightVideoEnded) {
+          babaDisplayed=true;
+          let barWidth = 200;
+          let barHeight = 20;
+          let xPos = (width - barWidth) / 2;
+          let yPos = height-64;
+          fill(255); // Couleur de fond de la barre
+          rect(xPos, yPos, barWidth, barHeight);
+          
+          let healthWidth = map(health, 0, 100, 0, barWidth); // Calculer la largeur de la barre de vie en fonction de la santé actuelle
+          
+          fill(0, 255, 0); // Couleur de la barre de vie
+          rect(xPos, yPos, healthWidth, barHeight); // Dessiner la barre de vie
+        }
         
-        fill(0, 255, 0); // Couleur de la barre de vie
-        rect(xPos, yPos, healthWidth, barHeight); // Dessiner la barre de vie
 
         if (babaDisplayed && roundRandomNbforbaba===0) {
           if (currentHeroImage!==hero6) {
+            
+            animationEnded=false;
+
             if (health>50) {
               i+=5;
             }else if(health<=50){
@@ -896,29 +1006,15 @@ function draw() {
             
             babaX=9*world1TileSize-i;
             babaY=3*world1TileSize+20;
-            // setTimeout(() => {
-            //   image(smoke1,babaX, babaY, babaWidth, babaHeight)
-            // }, 100);
-            // setTimeout(() => {
-            //   image(smoke2,babaX, babaY, babaWidth, babaHeight)
-            // }, 200);
-            // setTimeout(() => {
-            //   image(smoke3,babaX, babaY, babaWidth, babaHeight)
-            // }, 300);
-            // setTimeout(() => {
-            //   image(smoke4,babaX, babaY, babaWidth, babaHeight)
-            // }, 400);
-            // setTimeout(() => {
-            //   image(smoke5,babaX, babaY, babaWidth, babaHeight)
-            // }, 500);
-            // setTimeout(() => {
-            //   image(smoke6,babaX, babaY, babaWidth, babaHeight)
-            // }, 600);
-            // setTimeout(() => {
-            //   image(smoke7,babaX, babaY, babaWidth, babaHeight)
-            // }, 700);
             
             image(baba, babaX, babaY, babaWidth, babaHeight);
+
+            oneTimeAnimation(smokeAnimation,5)
+            //console.log(currentImgOfOneTimeAnimation);
+            if (currentImgOfOneTimeAnimation!==0 && currentImgOfOneTimeAnimation!==undefined) {
+              image(currentImgOfOneTimeAnimation,babaX, babaY, babaWidth, babaHeight)
+            }
+
             if (babaX<=heroX) {
               babaX=0;
               nbOfcollisionWithBaba++
@@ -928,6 +1024,7 @@ function draw() {
                 randomNbforbaba = random(1,2);
                 roundRandomNbforbaba = round(randomNbforbaba);
                 i=0;
+                resetOneTimeAnimation();
               }
             }
           }else{
@@ -935,6 +1032,7 @@ function draw() {
             randomNbforbaba = random(1, 2);
             roundRandomNbforbaba = round(randomNbforbaba);
             i=0;
+            resetOneTimeAnimation();
           }
           
         }else if (babaDisplayed && roundRandomNbforbaba===1) {
@@ -948,7 +1046,14 @@ function draw() {
             }
             babaX=5*world1TileSize+20;
             babaY=6*world1TileSize-i;
+
             image(baba2, babaX, babaY, babaWidth, babaHeight);
+
+            oneTimeAnimation(smokeAnimation,5)
+            //console.log(currentImgOfOneTimeAnimation);
+            if (currentImgOfOneTimeAnimation!==0 && currentImgOfOneTimeAnimation!==undefined) {
+              image(currentImgOfOneTimeAnimation,babaX, babaY, babaWidth, babaHeight)
+            }
             if (babaY<=heroY) {
               babaY=6*world1TileSize;
               nbOfcollisionWithBaba++
@@ -958,6 +1063,7 @@ function draw() {
                 randomNbforbaba = random([0, 2]);
                 roundRandomNbforbaba = round(randomNbforbaba);
                 i=0;
+                resetOneTimeAnimation();
               }
             }
           }else{
@@ -965,6 +1071,7 @@ function draw() {
             randomNbforbaba = random([0, 2]);
             roundRandomNbforbaba = round(randomNbforbaba);
             i=0;
+            resetOneTimeAnimation();
           }
         }else if (babaDisplayed && roundRandomNbforbaba===2){
           if (currentHeroImage!==hero5) {
@@ -977,7 +1084,14 @@ function draw() {
             }
             babaX=1*world1TileSize+i;
             babaY=3*world1TileSize+20;
+            
             image(baba1,babaX ,babaY , babaWidth, babaHeight);
+            
+            oneTimeAnimation(smokeAnimation,5)
+            //console.log(currentImgOfOneTimeAnimation);
+            if (currentImgOfOneTimeAnimation!==0 && currentImgOfOneTimeAnimation!==undefined) {
+              image(currentImgOfOneTimeAnimation,babaX, babaY, babaWidth, babaHeight)
+            }
             if (babaX>=heroX) {
               babaX=1*world1TileSize;
               nbOfcollisionWithBaba++
@@ -987,6 +1101,7 @@ function draw() {
                 randomNbforbaba = random(0, 1);
                 roundRandomNbforbaba = round(randomNbforbaba);
                 i=0;
+                resetOneTimeAnimation();
               }
             }
           }else{
@@ -994,6 +1109,7 @@ function draw() {
             randomNbforbaba = random(0, 1);
             roundRandomNbforbaba = round(randomNbforbaba);
             i=0;
+            resetOneTimeAnimation();
           }
           
         }
@@ -1114,6 +1230,7 @@ function draw() {
       }
     }
     if (propTurning) {
+      ventplaySound();
       if (towelMapLoaded===false) {
         currentImg = loadImage("assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/Tuiles/Ventilation1.png");
         towelMapLoaded=true;
@@ -1124,7 +1241,7 @@ function draw() {
     }
   }else if (currentFrontWorld===14) {
     if (mouseIsPressed === true) {
-      if (pointIsInObjective(windowWidth/2+300,windowHeight/2+25,mouseX,mouseY, 100,100)) {
+      if (pointIsInObjective(windowWidth/2+250,windowHeight/2+25,mouseX,mouseY, 100,100)) {
         localStorage.setItem("pinFound", JSON.stringify(true));
         bool=false;
         animation(mirrorNoFogLight,15);
@@ -1132,66 +1249,68 @@ function draw() {
       }
     }
   }else if (currentFrontWorld===15) {
-    //canDisplayPcDialogue=true;
-    // if (dollFound) {
-    //   //console.log("ok");
-    //   if (mouseIsPressed === true) {
-    //     if(pointIsInObjective(canvasWidth/2-100, canvasHeight/2-100,mouseX,mouseY, 200, 200)){   
-    //       let coteAdjacent = mouseX-canvasWidth/2;
-    //       let coteOpposee = mouseY-canvasHeight/2;
-    //       angle = atan(coteOpposee/coteAdjacent);
-    //       irotate = angle;
-    //       //console.log(angle);
-    //       if (angle >= 80) {
-    //         rotationCount+=0.25;
-    //         angle=0;
-    //         if (rotationCount===3) {
-    //           background(green);
-    //           redLight=false;
-    //           setTimeout(() => {
-    //             localStorage.setItem("frontSave", JSON.stringify(21));
-    //             localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
-
-    //             currentFrontWorld=21;
-    //             collision=world5Collision;
-    //           }, 1000);
-              
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    canDisplayPcDialogue=true;
+    let dollFound = JSON.parse(localStorage.getItem("dollFound"));
+    if (dollFound) {
       //console.log("ok");
-    if (mouseIsPressed === true) {
-      if(pointIsInObjective(canvasWidth/2-100, canvasHeight/2-100,mouseX,mouseY, 200, 200)){   
-        let coteAdjacent = mouseX-canvasWidth/2;
-        let coteOpposee = mouseY-canvasHeight/2;
-        angle = atan(coteOpposee/coteAdjacent);
-        irotate = angle;
-        //console.log(angle);
-        if (angle >= 80) {
-          rotationCount+=0.25;
-          angle=0;
-          if (rotationCount===3) {
-            redLight=false;
-            doorVideoBool = true;
-            // setTimeout(() => {
-            //   fightVideo.play();
-            //   image(fightVideo, 0, 0, canvasWidth, canvasHeight);
-            // }, 4000);
-            
-            setTimeout(() => {
-              localStorage.setItem("frontSave", JSON.stringify(21));
-              localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
+      if (mouseIsPressed === true) {
+        if(pointIsInObjective(canvasWidth/2-100, canvasHeight/2-100,mouseX,mouseY, 200, 200)){   
+          let coteAdjacent = mouseX-canvasWidth/2;
+          let coteOpposee = mouseY-canvasHeight/2;
+          angle = atan(coteOpposee/coteAdjacent);
+          irotate = angle;
+          //console.log(angle);
+          if (angle >= 80) {
+            rotationCount+=0.25;
+            angle=0;
+            if (rotationCount===3) {
+              background(green);
+              redLight=false;
+              doorVideoBool = true;
+              setTimeout(() => {
+                localStorage.setItem("frontSave", JSON.stringify(21));
+                localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
 
-              currentFrontWorld=21;
-              collision=world5Collision;
-            }, 4000);
-            
+                currentFrontWorld=21;
+                collision=world5Collision;
+              }, 1000);
+              
+            }
           }
         }
       }
     }
+      //console.log("ok");
+    // if (mouseIsPressed === true) {
+    //   if(pointIsInObjective(canvasWidth/2-100, canvasHeight/2-100,mouseX,mouseY, 200, 200)){   
+    //     let coteAdjacent = mouseX-canvasWidth/2;
+    //     let coteOpposee = mouseY-canvasHeight/2;
+    //     angle = atan(coteOpposee/coteAdjacent);
+    //     irotate = angle;
+    //     //console.log(angle);
+    //     if (angle >= 80) {
+    //       rotationCount+=0.25;
+    //       angle=0;
+    //       if (rotationCount===3) {
+    //         redLight=false;
+    //         doorVideoBool = true;
+    //         // setTimeout(() => {
+    //         //   fightVideo.play();
+    //         //   image(fightVideo, 0, 0, canvasWidth, canvasHeight);
+    //         // }, 4000);
+            
+    //         setTimeout(() => {
+    //           localStorage.setItem("frontSave", JSON.stringify(21));
+    //           localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
+
+    //           currentFrontWorld=21;
+    //           collision=world5Collision;
+    //         }, 4000);
+            
+    //       }
+    //     }
+    //   }
+    // }
     if (doorVideoBool) {
       doorVideo.play();
       image(doorVideo, 0, 0, canvasWidth, canvasHeight);
@@ -1206,6 +1325,39 @@ function draw() {
           }, 100);
           setTimeout(() => {
             background(cupboard3);
+          }, 200);
+      }
+
+      if (pointIsInObjective(canvasWidth/2-500, 0, mouseX,mouseY, 200, 260)) {
+        bool=false;
+        background(cupboard2_1);
+          setTimeout(() => {
+            background(cupboard2_2);
+          }, 100);
+          setTimeout(() => {
+            background(cupboard2_3);
+          }, 200);
+      }
+
+      if (pointIsInObjective(canvasWidth/2+250, 0, mouseX,mouseY, 200, 260)) {
+        bool=false;
+        background(cupboard4_1);
+          setTimeout(() => {
+            background(cupboard4_2);
+          }, 100);
+          setTimeout(() => {
+            background(cupboard4_3);
+          }, 200);
+      }
+
+      if (pointIsInObjective(200, canvasHeight/2+50, mouseX,mouseY, 200, 260)) {
+        bool=false;
+        background(cupboard3_1);
+          setTimeout(() => {
+            background(cupboard3_2);
+          }, 100);
+          setTimeout(() => {
+            background(cupboard3_3);
           }, 200);
       }
     }
@@ -1288,6 +1440,7 @@ function draw() {
         dragging = false;
 
         if (pointIsInObjective(100,10,pinX,pinY,480,550) && runAnim){
+          ventSound.stop();
           bool=false;
           //image(ventTest, 0, 0, canvasWidth, canvasHeight);
           ventVideo.play();
@@ -1354,11 +1507,21 @@ function draw() {
   if (brightness !== null) {
     adjustBrightness(parseInt(brightness));
   }
+
+  if (currentFrontWorld===15 && redLight) {
+    let dollFound = JSON.parse(localStorage.getItem("dollFound"));
+    if (canDisplayPcDialogueLRDoor && typeof dollFound !== 'boolean'){
+      image(d3,-40,canvasHeight-120);
+      setTimeout(() => {
+        canDisplayPcDialogueLRDoor=false
+      }, 2000);
+    }
+  }
   
   
   checkKeys(currentWorld);
   //fill("red");
-  //rect(canvasWidth/2-250, canvasHeight-200, 500,200)
+  //rect(canvasWidth/2+150, canvasHeight/2+50, 200, 260)
 }
 
 let inventoryCanvas = () => {
