@@ -147,6 +147,7 @@ let currentIndex=0;
 
 let ventAnimationBool=true;
 let doorVideoBool = false;
+let openingVideoBool = false;
 let bathMapLoaded = false;
 let bathMapLoadedAfterProp = false;
 let towelMapLoaded = false;
@@ -430,6 +431,8 @@ function setup() {
   endCredits = createVideo('assets/Fin du jeu.mp4');
 
   openingVideo = createVideo('assets/Cinematique/debut\ et\ fin/debut/cine\ debut.mp4');
+
+  openingVideo.elt.addEventListener('ended', videoEnded);
   
   // Hide the video element
   video.hide();
@@ -752,6 +755,14 @@ function resetOneTimeAnimation() {
   currentImgOfOneTimeAnimation = undefined;
 }
 
+function videoEnded() {
+  console.log("The video has finished playing.");
+  localStorage.setItem("save", JSON.stringify(2));
+      
+  localStorage.setItem("collisionSave", JSON.stringify(world1Collision));
+  inventoryCanvas();
+}
+
 
 let dollFound = JSON.parse(localStorage.getItem("dollFound"));
 // Appelé en continue après le setup
@@ -953,14 +964,13 @@ function draw() {
     if (progress < 100) {
       progress += 0.1;
     }else{
+      // openingVideoBool = true
+      // console.log(progress);
       openingVideo.play();
       image(openingVideo,0,0,canvasWidth,canvasHeight)
-      setTimeout(() => {
-        localStorage.setItem("save", JSON.stringify(2));
-      
-        localStorage.setItem("collisionSave", JSON.stringify(world1Collision));
-        inventoryCanvas();
-      }, 25000);
+      // setTimeout(() => {
+        
+      // }, 25000);
       
     }
 
