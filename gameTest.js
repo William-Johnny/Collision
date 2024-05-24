@@ -49,21 +49,18 @@ let menuDisplayed=false;
 let towelOpened=false;
 let fogImg=true;
 
-let fade;
-let fadeAmount = 1;
-let page = 1;
-
 let button;
 let play=false;
 
 let slider;
-let bg;
 let bg2;
 
 canMove=0;
 canMove2=0;
 canMove3=0;
 canMove4=0;
+canMove5=0;
+canMove6=0;
 
 let w = 90;
 let h = 99;
@@ -115,6 +112,7 @@ let dollTaken = false;
 
 let canPlaySound = true;
 let canPlayVentSound = true;
+let canPlayStepsSound = true;
 
 let video;
 
@@ -129,7 +127,8 @@ let screenResised = false;
 let sliderDrawn = false;
 
 let testMenu = false;
-let element = "";
+let element1 = "";
+let element2 = "";
 let sliderId = 0;
 
 let bathroomLight=[];
@@ -159,6 +158,19 @@ let currentImgOfOneTimeAnimation = 0;
 let animationEnded = false; 
 let playFightVideo=true;
 let fightVideoEnded=false;
+let fightVideoPlaying=false;
+
+let explosionvideoEnded = false;
+let passwordFound = false;
+
+let volume = 0.5;
+
+let salon;
+let scaledImg;
+let imgWidth, imgHeight;
+
+let testBool = false;
+let resizeAuthorised = true;
 
 
 function setFullSreen(){
@@ -170,43 +182,45 @@ function setFullSreen(){
 
 document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
   let mouseLifted = JSON.parse(localStorage.getItem("mouseLifted"));
-  if (typeof mouseLifted !== 'boolean') {
-    if (screenResised===false) {
-      setFullSreen();
-      if (canvasResised2===false) {
-        setTimeout(() => {
-          d1.resize(canvasWidth,0);
-          d2.resize(canvasWidth,0);
-          d3.resize(canvasWidth,0);
-          canvasHeight = windowHeight;
-          canvasWidth = windowWidth;
-          resizeCanvas(canvasWidth, canvasHeight);
-          canvasResised2=true;
-        }, 500);
+  if (resizeAuthorised) {
+    if (typeof mouseLifted !== 'boolean') {
+      if (screenResised===false) {
+        setFullSreen();
+        if (canvasResised2===false) {
+          setTimeout(() => {
+            d1.resize(canvasWidth,0);
+            d2.resize(canvasWidth,0);
+            d3.resize(canvasWidth,0);
+            canvasHeight = windowHeight;
+            canvasWidth = windowWidth;
+            resizeCanvas(canvasWidth, canvasHeight);
+            canvasResised2=true;
+          }, 500);
+        }
+        screenResised=true;
+        localStorage.setItem("mouseLifted", JSON.stringify(true));
       }
-      screenResised=true;
-      localStorage.setItem("mouseLifted", JSON.stringify(true));
-    }
-  }else{
-    if (screenResised===false) {
-      setFullSreen();
-      if (canvasResised2===false) {
-        setTimeout(() => {
-          d1.resize(canvasWidth,0);
-          d2.resize(canvasWidth,0);
-          d3.resize(canvasWidth,0);
-          canvasHeight = windowHeight;
-          canvasWidth = windowWidth;
-          resizeCanvas(canvasWidth-160, canvasHeight);
-          canvas.position(160,0);
-          canvasResised2=true;
-        }, 500);
+    }else{
+      if (screenResised===false) {
+        setFullSreen();
+        if (canvasResised2===false) {
+          setTimeout(() => {
+            d1.resize(canvasWidth,0);
+            d2.resize(canvasWidth,0);
+            d3.resize(canvasWidth,0);
+            canvasHeight = windowHeight;
+            canvasWidth = windowWidth;
+            resizeCanvas(canvasWidth-160, canvasHeight);
+            canvas.position(160,0);
+            canvasResised2=true;
+          }, 500);
+        }
+        screenResised=true;
       }
-      screenResised=true;
     }
+    resizeAuthorised=false;
+    
   }
-  
-  
 });
 
 
@@ -265,8 +279,9 @@ function preload(){
   //biblio = loadImage("assets/Tuiles/Meuble/Chambre/biblio/point & click/biblio.png");
   inventory = loadImage('assets/Tuiles/Inventaire/1.png');
   menu = loadImage('assets/Tuiles/Menu.png');
-  song = loadSound('assets/The Spooky House of Shady Lane.m4a');
+  song = loadSound('assets/Bruit-musique/The Spooky House of Shady Lane.m4a');
   ventSound = loadSound('assets/Bruit-musique/ventilation\ sdb.mp3');
+  steps = loadSound("assets/Bruit-musique/bruit pas.mp3");
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
   // bathroom1 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png');
@@ -280,7 +295,8 @@ function preload(){
   towel3 = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 1/3.png');
   
   pin = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Epingle.png')
-  salon = loadImage('assets/salon haut.png');
+  // salon = loadImage('assets/salon haut.jpg');
+  salon = loadImage('assets/salon haut2.png');
   porteBlinde = loadImage("assets/mur2.png"); 
   roue = loadImage("assets/roue.png"); 
   green = loadImage("assets/murVert.png"); 
@@ -315,7 +331,7 @@ function preload(){
   d2 = loadImage("assets/Dialogue/Chambre2.png");
   d3 = loadImage("assets/Dialogue/forgot.png");
   loadingScreen1 = loadImage("assets/Tuiles/1.png"); 
-  ding = loadSound('assets/hotel-bell-ding-1-174457.mp3');
+  ambiance = loadSound('assets/Bruit-musique/Come-Play-with-Me.mp3');
   room = loadImage("assets/Tuiles/Meuble/Chambre/Vue\ de\ haut/Vue\ de\ haut.png ");
   biblio = loadImage("assets/Tuiles/Meuble/Chambre/Vue point and click/Vue biblio.png ");
 
@@ -371,10 +387,10 @@ function setup() {
   candles.push(loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/bougies/2.png'));
   candles.push(loadImage('assets/Tuiles/Meuble/Cuisine/Vu\ de\ haut/bougies/3.png'));
 
-  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/1.png'));
-  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/2.png'));
-  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/3.png'));
-  // candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/4.png'));
+  candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/1.png'));
+  candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/2.png'));
+  candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/3.png'));
+  candlesView1.push(loadImage('assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/4.png'));
   
 
   mirrorFogLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Avec\ buee/Lavabo/Lavabo-.png'));
@@ -398,7 +414,6 @@ function setup() {
   smokeAnimation.push(loadImage('assets/smoke/6.png'));
   smokeAnimation.push(loadImage('assets/smoke/7.png'));
 
-  fade = 1
   let worldSave = JSON.parse(localStorage.getItem("worldSave"));
   let frontSave = JSON.parse(localStorage.getItem("frontSave"));
   let collisionSave = JSON.parse(localStorage.getItem("collisionSave"));
@@ -432,7 +447,16 @@ function setup() {
 
   openingVideo = createVideo('assets/Cinematique/debut\ et\ fin/debut/cine\ debut.mp4');
 
+  explosionVideo = createVideo('assets/Cinematique/debut\ et\ fin/maison\ detruite/maison.mp4');
+
+  liftVideo = createVideo('assets/Cinematique/Monte-plat/short monte plat.mov');
+
+  doorToBathroom = createVideo('assets/Cinematique/door\ room/doorToBathroom.mp4');
+
   openingVideo.elt.addEventListener('ended', videoEnded);
+  liftVideo.elt.addEventListener('ended', liftVideoEnded);
+  doorToBathroom.elt.addEventListener('ended', doorRoomVideoEnded);
+  //explosionVideo.elt.addEventListener('ended', explosionvideoEnded);
   
   // Hide the video element
   video.hide();
@@ -441,10 +465,36 @@ function setup() {
   doorVideo.hide();
   endCredits.hide();
   openingVideo.hide();
+  explosionVideo.hide();
+  liftVideo.hide();
+  doorToBathroom.hide();
 
   // for(let i = 0;i<width/10;i++){
   //   particles.push(new Particle());
   // }
+
+  // pixelDensity(1);
+  // frameRate(30);
+
+  // // Scale the image to fit the canvas
+  // imgWidth = canvasWidth;
+  // imgHeight = canvasHeight;
+  // scaledImg = createImage(imgWidth, imgHeight);
+  // salon.loadPixels();
+  // scaledImg.loadPixels();
+  // salon.resize(imgWidth, imgHeight);
+
+  // // Copy the pixels from the original image to the scaled image
+  // for (let x = 0; x < imgWidth; x++) {
+  //   for (let y = 0; y < imgHeight; y++) {
+  //     let loc = (x + y * imgWidth) * 4;
+  //     scaledImg.pixels[loc] = salon.pixels[loc];
+  //     scaledImg.pixels[loc + 1] = salon.pixels[loc + 1];
+  //     scaledImg.pixels[loc + 2] = salon.pixels[loc + 2];
+  //     scaledImg.pixels[loc + 3] = salon.pixels[loc + 3];
+  //   }
+  // }
+  // scaledImg.updatePixels();
 }
 
 function keyPressed() { 
@@ -454,11 +504,17 @@ function keyPressed() {
     } 
   }
 };
+
+function keyReleased() {
+  steps.stop();
+  canPlayStepsSound=true;
+}
 /////////////////////////////////////////////////////   MOVEMENTS
 const checkKeys = (currentMap)=>{
   if (babaDisplayed===false) {
     if (currentFrontWorld===1 || currentFrontWorld>8 && currentFrontWorld!=10) {
       if (keyIsDown(LEFT_ARROW)) {
+        //stepsplaySound()
         movementCounterHero += 1;
         
         heroX -= heroSpeed;
@@ -481,6 +537,7 @@ const checkKeys = (currentMap)=>{
       }
     
       if (keyIsDown(RIGHT_ARROW)) {
+        //stepsplaySound()
         movementCounterHero += 1;
         
         heroX += heroSpeed;
@@ -503,6 +560,7 @@ const checkKeys = (currentMap)=>{
       }
       
       if (keyIsDown(UP_ARROW)) {
+        //stepsplaySound()
         movementCounterHero += 1;
         heroY -= heroSpeed;
         if (checkCollision(collision,world1CollisionTileSize)) {
@@ -524,6 +582,7 @@ const checkKeys = (currentMap)=>{
       }
     
       if (keyIsDown(DOWN_ARROW)) {
+        //stepsplaySound()
         movementCounterHero += 1;
         heroY += heroSpeed;
         if (checkCollision(collision,world1CollisionTileSize)) {
@@ -616,9 +675,9 @@ function playSound(){
   play=true;
 }
 
-function testplaySound(){
+function ambianceplaySound(){
   if (canPlaySound) {
-    ding.play();
+    ambiance.play();
     canPlaySound=false; 
   }
 }
@@ -627,6 +686,13 @@ function ventplaySound() {
   if (canPlayVentSound) {
     ventSound.play();
     canPlayVentSound=false; 
+  }
+}
+
+function stepsplaySound() {
+  if (canPlayStepsSound) {
+    steps.play();
+    canPlayStepsSound=false; 
   }
 }
 
@@ -763,19 +829,52 @@ function videoEnded() {
   inventoryCanvas();
 }
 
+function liftVideoEnded() {
+  localStorage.setItem("frontSave", JSON.stringify(20));
+  localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
+
+  currentFrontWorld=20;
+  collision=world4Collision;
+}
+
+function doorRoomVideoEnded() {
+  localStorage.setItem("frontSave", JSON.stringify(50));
+  localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
+
+  currentFrontWorld=50;
+  collision=world2Collision;
+}
+
+
+
+// function explosionvideoEnded() {
+//   endCredits.play();
+//   image(endCredits, -80, 0, canvasWidth, canvasHeight);
+// }
+
+
+
 
 let dollFound = JSON.parse(localStorage.getItem("dollFound"));
 // Appelé en continue après le setup
 function draw() {
+  ambiance.setVolume(volume);
   imageMode(CORNER);
   //console.log(currentFrontWorld,currentWorld);
   checkCollision(collision,world1CollisionTileSize)
 
   if (wonBool) {
     setTimeout(() => {
+      explosionVideo.play();
+      image(explosionVideo, -80, 0, canvasWidth, canvasHeight);
+    }, 5000);
+    setTimeout(() => {
+      explosionvideoEnded=true;
+    }, 13000);
+    if (explosionvideoEnded) {
       endCredits.play();
       image(endCredits, -80, 0, canvasWidth, canvasHeight);
-    }, 5000);
+    }
   }
 
   if (cooldown > 0) {
@@ -806,11 +905,25 @@ function draw() {
       heroX=9*world1TileSize;
       heroY=4*world1TileSize-60;
     }
+  }else if (currentFrontWorld===20) {
+    canMove5++;
+    if (canMove5<=1) {
+      heroX=2*world1TileSize;
+      heroY=4*world1TileSize-60;
+    }
+  }else if (currentFrontWorld===50) {
+    console.log("test");
+    canMove6++;
+    if (canMove6<=1) {
+      heroX=9*world1TileSize;
+      heroY=6*world1TileSize;
+    }
   }
   
   //console.log(currentFrontWorld); 
   let save = JSON.parse(localStorage.getItem("save"));
   if (save===2) {
+    ambianceplaySound();
     canvasWidth = windowWidth-160;
     if (canvasResised===false) {
       resizeCanvas(canvasWidth, windowHeight);
@@ -838,14 +951,15 @@ function draw() {
 
       if (bathMapLoadedAfterProp) {
         //console.log(currentImg);
-        animation(bathroomLightNoFog,15);
-        if (currentImg.width!==128) {
-          background(currentImg);
-        }else{
-          currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut-.png');
-          background(currentImg);
-        }
-        
+        if (currentImg!==undefined) {
+          animation(bathroomLightNoFog,15);
+          if (currentImg.width!==128) {
+            background(currentImg);
+          }else{
+            currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut-.png');
+            background(currentImg);
+          }
+        } 
       }else{
         animation(bathroomLight,15);
         background(currentImg);
@@ -860,7 +974,36 @@ function draw() {
     }
   
     if (currentFrontWorld===20) {
-      background(salon);
+      background(salon)
+      // image(scaledImg, 0, 0);
+      // loadPixels();
+      // scaledImg.loadPixels();
+      // for (let x = 0; x < imgWidth; x++) {
+      //   for (let y = 0; y < imgHeight; y++) {
+      //     let loc = (x + y * imgWidth) * 4;
+      //     let r, g, b;
+      //     r = scaledImg.pixels[loc];
+      //     g = scaledImg.pixels[loc + 1];
+      //     b = scaledImg.pixels[loc + 2];
+
+      //     let maxdist = 200;
+      //     let d = dist(x, y, heroX+75, heroY+75);
+      //     let adjustbrightness = (255 * (maxdist - d)) / maxdist;
+      //     r += adjustbrightness;
+      //     g += adjustbrightness;
+      //     b += adjustbrightness;
+      //     r = constrain(r, 0, 190);
+      //     g = constrain(g, 0, 255);
+      //     b = constrain(b, 0, 255);
+
+      //     let pixloc = (y * width + x) * 4;
+      //     pixels[pixloc] = r;
+      //     pixels[pixloc + 1] = r;
+      //     pixels[pixloc + 2] = r;
+      //     pixels[pixloc + 3] = 255;
+      //   }
+      // }
+      // updatePixels();
     }
   
     if (currentFrontWorld===21) {
@@ -873,10 +1016,10 @@ function draw() {
     
     if (currentFrontWorld===25 && bool) {
       background(mainKitchenFurniture);
-      // animation(candlesView1,10);
-      // if (currentImg!==0) {
-      //   background(currentImg);
-      // }
+      animation(candlesView1,10);
+      if (currentImg!==0) {
+        background(currentImg);
+      }
       
     }
     if (currentFrontWorld===27) {
@@ -942,7 +1085,6 @@ function draw() {
   if (save===1) {
     canvasHeight = windowHeight;
     canvasWidth = windowWidth;
-
     background(loadingScreen1);
       
     // Dessiner la barre de chargement
@@ -992,10 +1134,12 @@ function draw() {
       // console.log(5*world1TileSize);
       if (heroX<=740 && heroX>=650 && currentFrontWorld===21 && heroY>=420 && heroY<=500) {
         if (playFightVideo) {
+          fightVideoPlaying = true;
           fightVideo.play();
           image(fightVideo, 0, 0, canvasWidth, canvasHeight);
           setTimeout(() => {
             playFightVideo=false;
+            fightVideoPlaying=false;
             fightVideoEnded=true;
           }, 20000);
         }
@@ -1299,44 +1443,13 @@ function draw() {
 
                 currentFrontWorld=21;
                 collision=world5Collision;
-              }, 1000);
+              }, 4000);
               
             }
           }
         }
       }
     }
-      //console.log("ok");
-    // if (mouseIsPressed === true) {
-    //   if(pointIsInObjective(canvasWidth/2-100, canvasHeight/2-100,mouseX,mouseY, 200, 200)){   
-    //     let coteAdjacent = mouseX-canvasWidth/2;
-    //     let coteOpposee = mouseY-canvasHeight/2;
-    //     angle = atan(coteOpposee/coteAdjacent);
-    //     irotate = angle;
-    //     //console.log(angle);
-    //     if (angle >= 80) {
-    //       rotationCount+=0.25;
-    //       angle=0;
-    //       if (rotationCount===3) {
-    //         redLight=false;
-    //         doorVideoBool = true;
-    //         // setTimeout(() => {
-    //         //   fightVideo.play();
-    //         //   image(fightVideo, 0, 0, canvasWidth, canvasHeight);
-    //         // }, 4000);
-            
-    //         setTimeout(() => {
-    //           localStorage.setItem("frontSave", JSON.stringify(21));
-    //           localStorage.setItem("collisionSave", JSON.stringify(world5Collision));
-
-    //           currentFrontWorld=21;
-    //           collision=world5Collision;
-    //         }, 4000);
-            
-    //       }
-    //     }
-    //   }
-    // }
     if (doorVideoBool) {
       doorVideo.play();
       image(doorVideo, 0, 0, canvasWidth, canvasHeight);
@@ -1427,11 +1540,7 @@ function draw() {
         dragging = false;
 
         if (pointIsInObjective(windowWidth/2+80,windowHeight/2+50,x,y,100,100)){
-          localStorage.setItem("frontSave", JSON.stringify(50));
-          localStorage.setItem("collisionSave", JSON.stringify(world2Collision));
-          
-          currentFrontWorld=50;
-          collision=world2Collision;  
+          testBool = true;
         }
       }
     }
@@ -1480,7 +1589,7 @@ function draw() {
             collision=world3Collision;
             localStorage.setItem("pinFound", JSON.stringify(false));
             bool = true;
-          }, 4000);
+          }, 10000);
           //runAnim=false;
         }
       }
@@ -1488,14 +1597,17 @@ function draw() {
   }
 
   if (res==="7452") {
-    localStorage.setItem("passwordFound", JSON.stringify(true));
-    fill('green');
+    passwordFound=true;
+    //localStorage.setItem("passwordFound", JSON.stringify(true));
+    //fill('green');
+    liftVideo.play();
+    image(liftVideo,0,0,canvasWidth,canvasHeight);
   }else if (res.length>4) {
     res="";
     fill('red');
   }
   let digicodeNumbers = addLetterSpacing(res, 15, '\u2007');
-  if (currentFrontWorld===12) {
+  if (currentFrontWorld===12 && !passwordFound) {
     textFont("Arial");
     textSize(50);
     text(digicodeNumbers, 590, 270);
@@ -1509,24 +1621,32 @@ function draw() {
     }, 2000);
     
     image(d2,-40,canvasHeight-60);
-    testplaySound();
   }
 
   if (testMenu) {
     image(menu,0,0,canvasWidth,canvasHeight+50);
     if (sliderDrawn===false) {
       let slider1;
+      let slider2;
       //console.log("slider");
       slider1 = createSlider(-100, 100, 0);
       slider1.position(canvasWidth/2, canvasHeight/2+50);
       slider1.size(200);
       slider1.id("slider1");
-      element = document.getElementById("slider1");
+      element1 = document.getElementById("slider1");
+      
+      slider2 = createSlider(0, 10, 5);
+      slider2.position(canvasWidth/2, 250);
+      slider2.size(200);
+      slider2.id("slider2");
+      element2 = document.getElementById("slider2");
       sliderDrawn=true;
     }
     let brightness = slider1.value;
     adjustBrightness(parseInt(brightness));
     localStorage.setItem("brightness", JSON.stringify(brightness));
+    volume = parseInt(slider2.value);
+    //localStorage.setItem("volume", JSON.stringify(volume));
   }
 
   let brightness = JSON.parse(localStorage.getItem("brightness"));
@@ -1544,8 +1664,15 @@ function draw() {
     }
   }
   
+  if (!fightVideoPlaying) {
+    checkKeys(currentWorld);
+  }
+
+  if (testBool) {
+    doorToBathroom.play();
+    image(doorToBathroom,0,0,canvasWidth,canvasHeight);
+  }
   
-  checkKeys(currentWorld);
   //fill("red");
   //rect(canvasWidth/2+150, canvasHeight/2+50, 200, 260)
 }
@@ -1585,8 +1712,8 @@ let inventoryCanvas = () => {
       }else if (testMenu) {
         console.log("test");
         if(pointIsInObjective(canvasWidth/2-250, canvasHeight-200,  mouseX,mouseY, 500,200)){
-          console.log("lol");
-          element.remove();
+          element1.remove();
+          element2.remove();
           testMenu = false;
           sliderDrawn=false;
         }
@@ -1609,7 +1736,7 @@ let inventoryCanvas = () => {
     localStorage.setItem("pinImgClicked", JSON.stringify(false));
     localStorage.setItem("keyFound", JSON.stringify(false));
     sketch.draw = function() {
-      sketch.background(100);
+      sketch.background(54,50,45);
       sketch.imageMode(CORNER);
       sketch.image(inventory, 0, 0);
 

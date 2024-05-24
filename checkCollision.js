@@ -38,7 +38,7 @@ function checkCollision(gameBoard,tileSize) {
         }
       }
 
-      let passFound = JSON.parse(localStorage.getItem("passwordFound"));
+      //let passFound = JSON.parse(localStorage.getItem("passwordFound"));
       if (currentFrontWorld===9) {
         if (currentTileValue===12) {
           if (rectIsInRect(heroX,heroY,heroWidth,heroHeight,tileSize*x+1,tileSize*y+1,tileSize,tileSize)) {
@@ -47,13 +47,13 @@ function checkCollision(gameBoard,tileSize) {
             txt = true;
             tile=currentTileValue;
 
-            if (passFound===true) {
-              localStorage.setItem("frontSave", JSON.stringify(20));
-              localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
+            // if (passFound===true) {
+            //   localStorage.setItem("frontSave", JSON.stringify(20));
+            //   localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
 
-              currentFrontWorld=20;
-              collision=world4Collision;
-            }
+            //   currentFrontWorld=20;
+            //   collision=world4Collision;
+            // }
             
           } 
         }else if (currentTileValue===25 || currentTileValue===26 || currentTileValue===27 ) {
