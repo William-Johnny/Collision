@@ -30,7 +30,9 @@ let heroX = 3*world1TileSize;
 let heroY = 5*world1TileSize;
 let txt = false;
 let tile = 0;
-let collision
+// let collision
+let collision = world1TileSize;
+
 
 let side = 80;
 let y1 = 265;
@@ -346,11 +348,11 @@ function setup() {
   canvas = createCanvas(canvasWidth,canvasHeight);
   canvas.position(0,0);
 
-  if (windowWidth===2560 && windowHeight===1600) {
-    collision=world1Collision13inch;
-  }else{
-    collision=world1Collision;
-  };
+  // if (windowWidth===2560 && windowHeight===1600) {
+  //   collision=world1Collision13inch;
+  // }else{
+  //   collision=world1Collision;
+  // };
 
   myHeroUp.push(loadImage('assets/Tuiles/Personnages/Boy/0_U.png'));
   myHeroUp.push(loadImage('assets/Tuiles/Personnages/Boy/1_U.png')); 
