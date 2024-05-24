@@ -166,4 +166,17 @@ function rectIsInRect(xP,yP,wP,hP,xR,yR,wR,hR){
 
 };
 
+function scaleCollisionTiles() {
+  let scaleX = windowWidth / baseWidth;
+  let scaleY = windowHeight / baseHeight;
+
+  scaledCollisionTiles = originalCollisionTiles.map(tile => {
+    return {
+      x: tile.x * scaleX,
+      y: tile.y * scaleY,
+      size: tile.size * Math.min(scaleX, scaleY)  // Ensure the size scales uniformly
+    };
+  });
+}
+
 //,xImaginaryPoint,yImaginaryPoint
