@@ -464,6 +464,7 @@ function setup() {
   openingVideo.elt.addEventListener('ended', videoEnded);
   liftVideo.elt.addEventListener('ended', liftVideoEnded);
   doorToBathroom.elt.addEventListener('ended', doorRoomVideoEnded);
+  video.elt.addEventListener('ended', darvozaVideoEnded);
   //explosionVideo.elt.addEventListener('ended', explosionvideoEnded);
   
   // Hide the video element
@@ -853,6 +854,12 @@ function doorRoomVideoEnded() {
   collision=world2Collision;
 }
 
+function darvozaVideoEnded() {
+  localStorage.setItem("save", JSON.stringify(1));
+}
+
+
+
 
 
 // function explosionvideoEnded() {
@@ -1084,9 +1091,6 @@ function draw() {
     setTimeout(() => {
       video.play();
       image(video, 0, 0, canvasWidth, canvasHeight);
-      setTimeout(() => {
-        localStorage.setItem("save", JSON.stringify(1));
-      }, 10000);
     }, 500);
   }
 
