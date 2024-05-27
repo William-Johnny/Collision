@@ -664,6 +664,11 @@ const checkKeys = (currentMap)=>{
       currentHeroImage=hero7;
       cooldown = 10;
     }
+
+    if (keyIsDown(80)) {
+      health=0;
+      won();
+    }
   }
   
 }
@@ -1436,7 +1441,7 @@ function draw() {
       }
       
       animation(propAnimation,5)
-      image(currentImg,canvasWidth/2+320,-32,240,240);
+      image(currentImg,canvasWidth/2+370,-32,250,240);
     }
   }else if (currentFrontWorld===14) {
     if (mouseIsPressed === true) {
