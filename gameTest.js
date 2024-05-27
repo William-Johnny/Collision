@@ -31,7 +31,7 @@ let heroY = 5*world1TileSize;
 let txt = false;
 let tile = 0;
 // let collision
-let collision = world1TileSize;
+let collision = world1Collision;
 
 
 let side = 80;
@@ -115,6 +115,8 @@ let dollTaken = false;
 let canPlaySound = true;
 let canPlayVentSound = true;
 let canPlayStepsSound = true;
+let canPlayTowelSound = true;
+let canPlayBookSound = true;
 
 let video;
 
@@ -283,6 +285,8 @@ function preload(){
   menu = loadImage('assets/Tuiles/Menu.png');
   song = loadSound('assets/Bruit-musique/The Spooky House of Shady Lane.m4a');
   ventSound = loadSound('assets/Bruit-musique/ventilation\ sdb.mp3');
+  towelSound = loadSound('assets/Bruit-musique/towel.mp3');
+  bookSound = loadSound('assets/Bruit-musique/book.mp3');
   steps = loadSound("assets/Bruit-musique/bruit pas.mp3");
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
@@ -839,6 +843,7 @@ function videoEnded() {
 }
 
 function liftVideoEnded() {
+  res="";
   localStorage.setItem("frontSave", JSON.stringify(20));
   localStorage.setItem("collisionSave", JSON.stringify(world4Collision));
 
@@ -855,7 +860,10 @@ function doorRoomVideoEnded() {
 }
 
 function darvozaVideoEnded() {
-  localStorage.setItem("save", JSON.stringify(1));
+  setTimeout(() => {
+    localStorage.setItem("save", JSON.stringify(1));
+  }, 4000);
+  
 }
 
 
@@ -1334,6 +1342,11 @@ function draw() {
 
     if (mouseIsPressed === true) {
       if(pointIsInObjective(y1, x1, mouseX,mouseY, w1, h1)){
+        if (canPlayBookSound) {
+          bookSound.play();
+          canPlayBookSound=false; 
+        }
+        
         bool = false;
         imageMode(CENTER);
         // image(bluredImg, 0, 0);
@@ -1391,6 +1404,10 @@ function draw() {
     if (mouseIsPressed === true) {
       if (towelOpened===false) {
         if (pointIsInObjective(windowWidth/2-75,windowHeight/2, mouseX,mouseY, 175,200)) {
+          if (canPlayTowelSound) {
+            towelSound.play();
+            canPlayTowelSound=false; 
+          }
           bool=false;
           background(towel2);
           setTimeout(() => {
@@ -1504,12 +1521,9 @@ function draw() {
       if (pointIsInObjective(200, canvasHeight/2+50, mouseX,mouseY, 200, 260)) {
         bool=false;
         background(cupboard3_1);
-          setTimeout(() => {
-            background(cupboard3_2);
-          }, 100);
-          setTimeout(() => {
-            background(cupboard3_3);
-          }, 200);
+        setTimeout(() => {
+          background(cupboard3_2);
+        }, 100);
       }
     }
   }else if (currentFrontWorld===28) {
