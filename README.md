@@ -33,7 +33,7 @@ Une fois le serveur en direct lancé via Live Server :
 3. Assurez-vous que votre résolution d'écran est définie sur 2880 × 1864p pour une qualité maximale.
 4. Il ne vous reste plus qu'a appuyer sur "play" et le jeu est lancé !
 
-:attention: Si le mode plein écran n'est pas activé activez le en cliquant n'importe où sur la fenêtre de jeu ou en l'activant manuellement en suivant la documentation de votre navigateur.
+:warning: Si le mode plein écran n'est pas activé activez le en cliquant n'importe où sur la fenêtre de jeu ou en l'activant manuellement en suivant la documentation de votre navigateur.
 
 ## Technologies Utilisées
 Ce projet a été réalisé en utilisant les technologies suivantes :
