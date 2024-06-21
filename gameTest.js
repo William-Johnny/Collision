@@ -117,6 +117,9 @@ let canPlayVentSound = true;
 let canPlayStepsSound = true;
 let canPlayTowelSound = true;
 let canPlayBookSound = true;
+let canPlayKeysSound = true;
+let canPlayLightSound = true;
+let canPlayIntroSound = true;
 
 let video;
 
@@ -176,6 +179,10 @@ let imgWidth, imgHeight;
 let testBool = false;
 let resizeAuthorised = true;
 
+let canClickOnFlashlight = false;
+let flashlightTaken = false;
+let canDisplayDigiDialogue = true;
+let otherTestBool = false;
 
 function setFullSreen(){
     var elem = document.getElementsByTagName("body")[0];
@@ -195,6 +202,8 @@ document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
             d1.resize(canvasWidth,0);
             d2.resize(canvasWidth,0);
             d3.resize(canvasWidth,0);
+            d4.resize(canvasWidth,0);
+            d5.resize(canvasWidth,0);
             canvasHeight = windowHeight;
             canvasWidth = windowWidth;
             resizeCanvas(canvasWidth, canvasHeight);
@@ -212,6 +221,8 @@ document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
             d1.resize(canvasWidth,0);
             d2.resize(canvasWidth,0);
             d3.resize(canvasWidth,0);
+            d4.resize(canvasWidth,0);
+            d5.resize(canvasWidth,0);
             canvasHeight = windowHeight;
             canvasWidth = windowWidth;
             resizeCanvas(canvasWidth-160, canvasHeight);
@@ -227,55 +238,8 @@ document.getElementsByTagName("body")[0].addEventListener("mouseup", ()=>{
   }
 });
 
-
-
-// // this class describes the properties of a single particle.
-// class Particle {
-//   // setting the co-ordinates, radius and the
-//   // speed of a particle in both the co-ordinates axes.
-//     constructor(){
-//       this.x = random(0,width);
-//       this.y = random(0,height);
-//       this.r = random(1,8);
-//       this.xSpeed = random(-2,2);
-//       this.ySpeed = random(-1,1.5);
-//     }
-  
-//   // creation of a particle.
-//     createParticle() {
-//       noStroke();
-//       fill('rgba(200,169,169,0.5)');
-//       circle(this.x,this.y,this.r);
-//     }
-  
-//   // setting the particle in motion.
-//     moveParticle() {
-//       if(this.x < 0 || this.x > width)
-//         this.xSpeed*=-1;
-//       if(this.y < 0 || this.y > height)
-//         this.ySpeed*=-1;
-//       this.x+=this.xSpeed;
-//       this.y+=this.ySpeed;
-//     }
-  
-//   // this function creates the connections(lines)
-//   // between particles which are less than a certain distance apart
-//     joinParticles(particles) {
-//       particles.forEach(element =>{
-//         let dis = dist(this.x,this.y,element.x,element.y);
-//         if(dis<85) {
-//           //stroke('rgba(255,255,255,0.04)');
-//           line(this.x,this.y,element.x,element.y);
-//         }
-//       });
-//     }
-// }
-  
-//   // an array to add multiple particles
-//   let particles = [];
-  
-
 function preload(){
+  rond = loadImage('assets/rond.png');
   house  = loadImage("assets/Cinematique/debut\ et\ fin/debut/maison@4x.png");
   img2 = loadImage('assets/Subject.png');
   img3 = loadImage('assets/openBook.png');
@@ -287,6 +251,9 @@ function preload(){
   ventSound = loadSound('assets/Bruit-musique/ventilation\ sdb.mp3');
   towelSound = loadSound('assets/Bruit-musique/towel.mp3');
   bookSound = loadSound('assets/Bruit-musique/book.mp3');
+  keysSound = loadSound('assets/Bruit-musique/keys.mp3');
+  lightSound = loadSound('assets/Bruit-musique/light-switch-81967.mp3');
+  introSound = loadSound('assets/Bruit-musique/cinematic-atmosphere-score-2-22136.mp3');
   steps = loadSound("assets/Bruit-musique/bruit pas.mp3");
   fontRegular = loadFont('assets/Typographie/Nevermore Nom Jeu.otf');
   fontPlay = loadFont('assets/Typographie/HeavenGate Bouton_Menu.otf');
@@ -312,23 +279,28 @@ function preload(){
   baba2 = loadImage('assets/Tuiles/Personnages/Babayaga/Babayaga B.png');
   unlockableDoor = loadImage("assets/Tuiles/Meuble/Chambre/Vue point and click/lit p&c@4x.png"); 
   mainKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/1.png ");
-  secondaryKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 2/2.png ");
+  secondaryKitchenFurniture = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 2/2.png");
   kitchenWall = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 4/4.png "); 
   
-  cupboard1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/1.png "); 
-  cupboard2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/2.png  "); 
-  cupboard3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/3.png "); 
+  cupboard1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/1.png"); 
+  cupboard2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/2.png"); 
+  cupboard3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautMChiffre/3.png"); 
 
-  cupboard2_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/1.png "); 
-  cupboard2_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/2.png  "); 
-  cupboard2_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/3.png "); 
+  cupboard2_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/1.png"); 
+  cupboard2_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/2.png"); 
+  cupboard2_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautG/3.png"); 
 
-  cupboard3_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasG/1.png "); 
-  cupboard3_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasG/2.png  "); 
+  cupboard3_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasG/1.png"); 
+  cupboard3_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasG/2.png"); 
 
-  cupboard4_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/1.png "); 
-  cupboard4_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/2.png  "); 
-  cupboard4_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/3.png "); 
+  cupboard4_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/1.png"); 
+  cupboard4_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/2.png"); 
+  cupboard4_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardHautD/3.png"); 
+
+  cupboard5_1 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasD/1.png"); 
+  cupboard5_2 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasD/2.png"); 
+  cupboard5_3 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasD/3.png");
+  cupboard5_4 = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/nb/Vue\ 1/PlacardBasD/4.png"); 
   
   roomWithDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/mur\ 1@4x.png"); 
   noDoll = loadImage("assets/Tuiles/Meuble/Salon/Mur/Point\ \&\ click/noDoll @4x.png"); 
@@ -336,6 +308,8 @@ function preload(){
   d1 = loadImage("assets/Dialogue/Chambre1.png"); 
   d2 = loadImage("assets/Dialogue/Chambre2.png");
   d3 = loadImage("assets/Dialogue/forgot.png");
+  d4 = loadImage("assets/Dialogue/salon1.png");
+  d5 = loadImage("assets/Dialogue/Cuisine3.png");
   loadingScreen1 = loadImage("assets/Tuiles/1.png"); 
   ambiance = loadSound('assets/Bruit-musique/Come-Play-with-Me.mp3');
   room = loadImage("assets/Tuiles/Meuble/Chambre/Vue\ de\ haut/Vue\ de\ haut.png ");
@@ -351,12 +325,6 @@ function setup() {
   canvasWidth = windowWidth;
   canvas = createCanvas(canvasWidth,canvasHeight);
   canvas.position(0,0);
-
-  // if (windowWidth===2560 && windowHeight===1600) {
-  //   collision=world1Collision13inch;
-  // }else{
-  //   collision=world1Collision;
-  // };
 
   myHeroUp.push(loadImage('assets/Tuiles/Personnages/Boy/0_U.png'));
   myHeroUp.push(loadImage('assets/Tuiles/Personnages/Boy/1_U.png')); 
@@ -388,6 +356,8 @@ function setup() {
   d1.resize(canvasWidth,0);
   d2.resize(canvasWidth,0);
   d3.resize(canvasWidth,0);
+  d4.resize(canvasWidth,0);
+  d5.resize(canvasWidth,0);
 
   bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut1.png'));
   bathroomLight.push(loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut2.png')); 
@@ -465,7 +435,10 @@ function setup() {
 
   doorToBathroom = createVideo('assets/Cinematique/door\ room/doorToBathroom.mp4');
 
+  introToRoom = createVideo('assets/Cinematique/intro\ room/introToRoom.mp4');
+
   openingVideo.elt.addEventListener('ended', videoEnded);
+  introToRoom.elt.addEventListener('ended', videoTestEnded);
   liftVideo.elt.addEventListener('ended', liftVideoEnded);
   doorToBathroom.elt.addEventListener('ended', doorRoomVideoEnded);
   video.elt.addEventListener('ended', darvozaVideoEnded);
@@ -481,33 +454,9 @@ function setup() {
   explosionVideo.hide();
   liftVideo.hide();
   doorToBathroom.hide();
+  introToRoom.hide();
 
-  // for(let i = 0;i<width/10;i++){
-  //   particles.push(new Particle());
-  // }
-
-  // pixelDensity(1);
-  // frameRate(30);
-
-  // // Scale the image to fit the canvas
-  // imgWidth = canvasWidth;
-  // imgHeight = canvasHeight;
-  // scaledImg = createImage(imgWidth, imgHeight);
-  // salon.loadPixels();
-  // scaledImg.loadPixels();
-  // salon.resize(imgWidth, imgHeight);
-
-  // // Copy the pixels from the original image to the scaled image
-  // for (let x = 0; x < imgWidth; x++) {
-  //   for (let y = 0; y < imgHeight; y++) {
-  //     let loc = (x + y * imgWidth) * 4;
-  //     scaledImg.pixels[loc] = salon.pixels[loc];
-  //     scaledImg.pixels[loc + 1] = salon.pixels[loc + 1];
-  //     scaledImg.pixels[loc + 2] = salon.pixels[loc + 2];
-  //     scaledImg.pixels[loc + 3] = salon.pixels[loc + 3];
-  //   }
-  // }
-  // scaledImg.updatePixels();
+  localStorage.setItem("flashlightImgClicked", JSON.stringify(false));
 }
 
 function keyPressed() { 
@@ -725,8 +674,8 @@ function adjustBrightness(adjustment) {
 }
 
 function mouseClicked() {
-  
-  if (currentFrontWorld === 12) {
+  let flashlightFound = JSON.parse(localStorage.getItem("flashlightFound"));
+  if (currentFrontWorld === 12 && typeof flashlightFound === 'boolean') {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 3; j++) {
             if (pointIsInObjective((j * w + j * 40) + 565, (i * h + i * 40) + 370, mouseX, mouseY, w, h)) {
@@ -840,11 +789,17 @@ function resetOneTimeAnimation() {
 }
 
 function videoEnded() {
+  otherTestBool = true;
+}
+
+function videoTestEnded() {
+  introSound.stop();
   console.log("The video has finished playing.");
   localStorage.setItem("save", JSON.stringify(2));
       
   localStorage.setItem("collisionSave", JSON.stringify(world1Collision));
   inventoryCanvas();
+  otherTestBool=false;
 }
 
 function liftVideoEnded() {
@@ -865,6 +820,7 @@ function doorRoomVideoEnded() {
 }
 
 function darvozaVideoEnded() {
+  play=false;
   setTimeout(() => {
     localStorage.setItem("save", JSON.stringify(1));
   }, 4000);
@@ -879,6 +835,16 @@ function darvozaVideoEnded() {
 //   endCredits.play();
 //   image(endCredits, -80, 0, canvasWidth, canvasHeight);
 // }
+
+function playTest() {
+  openingVideo.play();
+  image(openingVideo,0,0,canvasWidth,canvasHeight);
+}
+
+function otherTest() {
+  introToRoom.play();
+  image(introToRoom,0,0,canvasWidth,canvasHeight)
+}
 
 
 
@@ -940,7 +906,6 @@ function draw() {
       heroY=4*world1TileSize-60;
     }
   }else if (currentFrontWorld===50) {
-    console.log("test");
     canMove6++;
     if (canMove6<=1) {
       heroX=9*world1TileSize;
@@ -964,11 +929,6 @@ function draw() {
     if (currentFrontWorld===1 && save===2) {
       localStorage.setItem("frontSave", JSON.stringify(1));
       background(room);
-      // for(let i = 0;i<particles.length;i++) {
-      //   particles[i].createParticle();
-      //   particles[i].moveParticle();
-      //   particles[i].joinParticles(particles.slice(i));
-      // }
     }
 
     if (currentFrontWorld===50) {
@@ -978,12 +938,13 @@ function draw() {
       }
 
       if (bathMapLoadedAfterProp) {
-        //console.log(currentImg);
-        if (currentImg!==undefined) {
-          animation(bathroomLightNoFog,15);
+        console.log(currentImg);
+        animation(bathroomLightNoFog,15);
+        if (typeof currentImg !== 'undefined') {
           if (currentImg.width!==128) {
             background(currentImg);
           }else{
+            console.log("width not ok");
             currentImg=loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Vue\ de\ haut/bathroom/Vue\ de\ haut-.png');
             background(currentImg);
           }
@@ -1000,38 +961,27 @@ function draw() {
       imageMode(CORNER);
       background(biblio);
     }
-  
+    
+    let flashlightTaken = JSON.parse(localStorage.getItem("flashlightImgClicked")); 
     if (currentFrontWorld===20) {
-      background(salon)
-      // image(scaledImg, 0, 0);
-      // loadPixels();
-      // scaledImg.loadPixels();
-      // for (let x = 0; x < imgWidth; x++) {
-      //   for (let y = 0; y < imgHeight; y++) {
-      //     let loc = (x + y * imgWidth) * 4;
-      //     let r, g, b;
-      //     r = scaledImg.pixels[loc];
-      //     g = scaledImg.pixels[loc + 1];
-      //     b = scaledImg.pixels[loc + 2];
+      if (!flashlightTaken) {
+        background(0)
+      }else{
+        if (canPlayLightSound) {
+          lightSound.play();
+          canPlayLightSound=false; 
+        }
+        imageMode(CORNER);
+        image(salon,0, 0,canvasWidth, canvasHeight); 
+        imageMode(CENTER);
+        image(rond, heroX+55, heroY+55); 
+      }
+      
 
-      //     let maxdist = 200;
-      //     let d = dist(x, y, heroX+75, heroY+75);
-      //     let adjustbrightness = (255 * (maxdist - d)) / maxdist;
-      //     r += adjustbrightness;
-      //     g += adjustbrightness;
-      //     b += adjustbrightness;
-      //     r = constrain(r, 0, 190);
-      //     g = constrain(g, 0, 255);
-      //     b = constrain(b, 0, 255);
-
-      //     let pixloc = (y * width + x) * 4;
-      //     pixels[pixloc] = r;
-      //     pixels[pixloc + 1] = r;
-      //     pixels[pixloc + 2] = r;
-      //     pixels[pixloc + 3] = 255;
-      //   }
-      // }
-      // updatePixels();
+      if (!flashlightTaken) {
+        imageMode(CORNER);
+        image(d4,0,canvasHeight-80);
+      }
     }
   
     if (currentFrontWorld===21) {
@@ -1060,7 +1010,7 @@ function draw() {
     if (currentFrontWorld===13 && bool) {
       background(towel);
     }
-    //console.log(dollFound);
+    
     if (currentFrontWorld===28 && bool && dollFound!==true) {
       background(roomWithDoll);
     }else if(currentFrontWorld===28 && bool && dollFound===true){
@@ -1093,7 +1043,8 @@ function draw() {
     if (currentFrontWorld===9) {
       background(bg2);
       animation(candles,10);
-      if (currentImg!==0) {
+      image(d5,-40,canvasHeight-120);
+      if (currentImg!==0 && currentImg!==undefined) {
         image(currentImg,0,0,canvasWidth,canvasHeight);
       }
     }
@@ -1106,8 +1057,8 @@ function draw() {
       image(video, 0, 0, canvasWidth, canvasHeight);
     }, 500);
   }
-
-  if (save===1) {
+  
+  if (save===1 && !otherTestBool) {
     canvasHeight = windowHeight;
     canvasWidth = windowWidth;
     background(loadingScreen1);
@@ -1130,14 +1081,16 @@ function draw() {
 
     if (progress < 100) {
       progress += 0.1;
-    }else{
+     // console.log(progress);
+    }else if (progress === 100.09999999999859){
       // openingVideoBool = true
-      // console.log(progress);
-      openingVideo.play();
-      image(openingVideo,0,0,canvasWidth,canvasHeight)
-      // setTimeout(() => {
-        
-      // }, 25000);
+      //console.log(progress);
+      playTest();
+      
+      if (canPlayIntroSound) {
+        introSound.play();
+        canPlayIntroSound=false; 
+      }
       
     }
 
@@ -1152,7 +1105,8 @@ function draw() {
       //   background(0); 
       // }
       
-      if (currentFrontWorld<3 || currentFrontWorld===50 || currentFrontWorld===9 || currentFrontWorld===20 || currentFrontWorld===21) {
+      let flashlightImgClicked = JSON.parse(localStorage.getItem("flashlightImgClicked"));
+      if (currentFrontWorld<3 || currentFrontWorld===50 || currentFrontWorld===9 || currentFrontWorld===20 && flashlightImgClicked || currentFrontWorld===21) {
         image(currentHeroImage, heroX, heroY, heroWidth, heroHeight);
       }
 
@@ -1441,7 +1395,7 @@ function draw() {
       }
       
       animation(propAnimation,5)
-      image(currentImg,canvasWidth/2+370,-32,250,240);
+      image(currentImg,canvasWidth/2+316,-26,240,235);
     }
   }else if (currentFrontWorld===14) {
     if (mouseIsPressed === true) {
@@ -1530,6 +1484,22 @@ function draw() {
           background(cupboard3_2);
         }, 100);
       }
+
+      if (!canClickOnFlashlight && pointIsInObjective(980, canvasHeight/2+50, mouseX,mouseY, 200, 260)) {
+        bool=false;
+        background(cupboard5_1);
+        setTimeout(() => {
+          background(cupboard5_2);
+        }, 100);
+        setTimeout(() => {
+          background(cupboard5_3);
+          canClickOnFlashlight=true
+        }, 200);
+      }
+      if (canClickOnFlashlight && pointIsInObjective(980, canvasHeight/2+50, mouseX,mouseY, 200, 260)) {
+        background(cupboard5_4);
+        localStorage.setItem("flashlightFound", JSON.stringify(true));
+      }
     }
   }else if (currentFrontWorld===28) {
     if (mouseIsPressed === true) {
@@ -1546,6 +1516,10 @@ function draw() {
   if (currentFrontWorld===7) {
     background(unlockableDoor)
     if (keyClicked) {
+      if (canPlayKeysSound) {
+        keysSound.play();
+        canPlayKeysSound=false; 
+      }
       image(theKey,x, y,100,50)
       // Is mouse over object
       if (mouseX > x && mouseX < x + keyWidth && mouseY > y && mouseY < y + keyHeight) {
@@ -1694,6 +1668,14 @@ function draw() {
       }, 2000);
     }
   }
+
+  let flashlightFound = JSON.parse(localStorage.getItem("flashlightFound"));
+  if (canDisplayDigiDialogue && typeof flashlightFound !== 'boolean' && currentFrontWorld===12){
+    image(d3,-40,canvasHeight-120);
+    setTimeout(() => {
+      canDisplayDigiDialogue=false
+    }, 2000);
+  }
   
   if (!fightVideoPlaying) {
     checkKeys(currentWorld);
@@ -1702,8 +1684,12 @@ function draw() {
   if (testBool) {
     doorToBathroom.play();
     image(doorToBathroom,0,0,canvasWidth,canvasHeight);
+    testBool=false;
   }
   
+  if (otherTestBool) {
+    otherTest();
+  }
   //fill("red");
   //rect(world1TileSize*2+1,world1TileSize*1+1,100,100)
 }
@@ -1714,6 +1700,7 @@ let inventoryCanvas = () => {
     sketch.preload = function(){
       theKey = loadImage('assets/key.png');
       pin = loadImage('assets/Tuiles/Meuble/Salle\ de\ bain/Point\ and\ click/Vue\ 2/Epingle.png')
+      flashlight = loadImage("assets/Tuiles/Meuble/Cuisine/Point\ and\ click/LampeT.png");
     }
   
     sketch.setup = function() {
@@ -1784,9 +1771,17 @@ let inventoryCanvas = () => {
           localStorage.setItem("pinImgClicked", JSON.stringify(true));
         }
       }
+
+      if (sketch.mouseIsPressed===true && currentFrontWorld===20) {
+        if (pointIsInObjective(30, 470,sketch.mouseX,sketch.mouseY,100,40)) {
+          console.log("yep");
+          localStorage.setItem("flashlightImgClicked", JSON.stringify(true));
+        }
+      }
       
       let keyFound = JSON.parse(localStorage.getItem("keyFound"));
       let keyImgClicked = JSON.parse(localStorage.getItem("keyImgClicked"));
+      let flashlightImgClicked = JSON.parse(localStorage.getItem("flashlightImgClicked"));
       if (keyFound && keyImgClicked===false) {
         sketch.image(theKey,  30, 470,100,40);
       }
@@ -1800,6 +1795,15 @@ let inventoryCanvas = () => {
       let dollFound = JSON.parse(localStorage.getItem("dollFound"));
       if (dollFound) {
         sketch.image(doll,  28, 440,100,100);
+      }
+      
+      let flashlightFound = JSON.parse(localStorage.getItem("flashlightFound"));
+      if (flashlightFound && !flashlightImgClicked && currentFrontWorld===9 || flashlightFound && !flashlightImgClicked && currentFrontWorld===12 || flashlightFound && !flashlightImgClicked && currentFrontWorld>=25 && currentFrontWorld<=27 ) {
+        sketch.image(flashlight,  28, 440,100,100);
+      }
+
+      if (flashlightFound && !flashlightImgClicked && currentFrontWorld===20) {
+        sketch.image(flashlight,  28, 440,100,100);
       }
 
       if (gameOverBool) {

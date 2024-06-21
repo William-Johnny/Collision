@@ -31,7 +31,7 @@ Une fois le serveur en direct lancé via Live Server :
 1. Assurez-vous d'avoir un PC sous Windows pour une expérience optimale.
 2. Lancez le jeu sur le navigateur de votre choix.
 3. Assurez-vous que votre résolution d'écran est définie sur 2880 × 1864p pour une qualité maximale.
-4. Il ne vous reste plus qu'a appuyer sur "play" et le jeu est lancé !
+4. Il ne vous reste plus qu'à appuyer sur "play" et le jeu est lancé !
 
 :warning: Si le mode plein écran n'est pas activé activez le en cliquant n'importe où sur la fenêtre de jeu ou en l'activant manuellement en suivant la documentation de votre navigateur.
 
